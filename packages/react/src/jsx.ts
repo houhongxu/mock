@@ -12,7 +12,6 @@ import {
 
 /**
  * 生成ReactElement数据结构
- * @description:
  */
 function ReactElement(
   type: Type,
@@ -31,8 +30,10 @@ function ReactElement(
 
   return element
 }
-// ? 为什么子节点不在config里面的children传入
-// 参考https://juejin.cn/post/6876030404789436429可能是因为实现难吧
+/**
+ * 转换jsx为ReactElement
+ * @description 子节点不通过config参数的children属性传入，是因为更这样便于实现React.createElement
+ */
 export function jsx(type: ElementType, config: any, ...maybeChildren: any[]) {
   let key: Key = null
   const props: Props = {}
