@@ -32,7 +32,7 @@ function ReactElement(
 }
 /**
  * 转换jsx为ReactElement
- * @description 子节点不通过config参数的children属性传入，是因为更这样便于实现React.createElement
+ * @description 子节点不通过config参数的children属性传入，是因为这样不需要重新实现React.createElement
  */
 export function jsx(type: ElementType, config: any, ...maybeChildren: any[]) {
   let key: Key = null
