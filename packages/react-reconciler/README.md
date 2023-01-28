@@ -8,3 +8,9 @@
 - workInProgress：触发更新后，正在 reconciler 中计算的 fiberNode 树
 
 更新后 current 和 workInProgress 引用互相替换
+
+## 更新
+
+- ReactDOM.createRoot().render（或老版的 ReactDOM.render）
+- this.setState
+- useState 的 dispatch 方法

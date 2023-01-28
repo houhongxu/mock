@@ -27,3 +27,8 @@ test
 ## react
 
 - react jsx->没有编译优化->协调渲染->宿主环境 api->UI，所以是运行时框架
+
+## 整理
+
+1. 与[react17 源码调试](https://react.iamkasong.com/)的各章节流程概览结合，将各个流程整理成笔记
+2. 各个流程源码调试熟练并记录
