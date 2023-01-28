@@ -2,7 +2,8 @@
 
 import { beginWork } from './beginWork'
 import { completeWork } from './completeWork'
-import { FiberNode } from './fiber'
+import { createWorkInProgress, FiberNode, FiberRootNode } from './fiber'
+import { HostRoot } from './workTags'
 
 /**
  * 工作中的FiberNode
@@ -10,16 +11,17 @@ import { FiberNode } from './fiber'
 let workInProgress: FiberNode | null = null
 
 /**
- * 将workInProgress指向根FiberNode
+ * 将workInProgress指向fiberRootNode
  */
-function prepareRefreshStack(fiber: FiberNode) {
-  workInProgress = fiber
+function prepareRefreshStack(root: FiberRootNode) {
+  workInProgress = createWorkInProgress(root.current, {})
 }
 
 /**
  * 完成工作单元
  */
 function completeUnitOfWork(fiber: FiberNode) {
+  // 拷贝fiber
   let node: FiberNode | null = fiber
 
   // 遍历兄弟节点
@@ -45,7 +47,7 @@ function completeUnitOfWork(fiber: FiberNode) {
  * 执行工作单元
  */
 function performUnitOfWork(fiber: FiberNode) {
-  // 开始工作并获取子节点
+  // 开始递工作并获取子节点
   const next = beginWork(fiber)
   // 更新props为工作处理后的props
   fiber.memoizedProps = fiber.pendingProps
@@ -69,13 +71,36 @@ function workLoop() {
 }
 
 /**
- * 初始化根FiberNode并开始工作循环
+ * 从fiber开始遍历到fiberRootNode
  */
-function renderRoot(root: FiberNode) {
+function markUpdateFromFiberToRoot(fiber: FiberNode) {
+  // 拷贝fiber
+  let node = fiber
+  // 获取父节点
+  let parent = node.return
+  // 循环获取父节点
+  while (parent !== null) {
+    node = parent
+    parent = node.return
+  }
+  // 获取fiberRootNode
+  if (node.tag === HostRoot) {
+    return node.stateNode
+  }
+
+  return null
+}
+
+/**
+ * 初始化fiberRootNode并开始工作循环
+ */
+function renderRoot(root: FiberRootNode) {
+  // 初始化fiberRootNode
   prepareRefreshStack(root)
 
   do {
     try {
+      // 开始工作循环
       workLoop()
       break
     } catch (e) {
@@ -83,4 +108,18 @@ function renderRoot(root: FiberNode) {
       workInProgress = null
     }
   } while (true)
+}
+
+/**
+ * 在fiber中调度更新流程
+ * @description 传入的fiber可为任意应用内组件对应的fiber
+ */
+export function scheduleUpdateOnFiber(fiber: FiberNode) {
+  // TODO 调度功能
+
+  // 获取fiberRootNode
+  const root = markUpdateFromFiberToRoot(fiber)
+
+  // 初始化fiberRootNode并开始工作
+  renderRoot(root)
 }
