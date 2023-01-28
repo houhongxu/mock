@@ -28,3 +28,16 @@ Object.hasOwn 解决的问题：
 - 如果你对对象的内置属性进行了重新赋值改写，那么你在调用某个属性（比如：.hasOwnProperty）时，肯定调用的不是对象的内置属性
 
 - 在 ESLint 的规则 built-in rule 中，是禁止直接使用 Object.prototypes 内置函数
+
+## 为什么 ReactElement 无法作为协调的数据结构
+
+- 无法表达节点之间的关系
+- 字段有限，不好拓展（比如：无法表达状态）
+
+需要的特性
+
+- 介于 ReactElement 与真实 UI 节点之间
+- 能够表达节点之间的关系
+- 方便拓展（不仅作为数据存储单元，也能作为工作单元）
+
+jsx->ReactElement->FiberNode->DOMElement

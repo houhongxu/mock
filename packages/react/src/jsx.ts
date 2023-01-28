@@ -31,7 +31,7 @@ function ReactElement(
   return element
 }
 /**
- * 转换jsx为ReactElement
+ * 生产环境，转换jsx为ReactElement
  * @description 子节点不通过config参数的children属性传入，是因为这样不需要重新实现React.createElement
  */
 export function jsx(type: ElementType, config: any, ...maybeChildren: any[]) {
