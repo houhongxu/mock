@@ -32,7 +32,7 @@ export function updateContainer(
   element: ReactElement | null,
   root: FiberRootNode
 ) {
-  // 获取hostRootFiber
+  // 获取hostRootFiber-current
   const hostRootFiber = root.current
   // 创建更新实例
   const update = createUpdate<ReactElement | null>(element)

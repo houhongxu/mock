@@ -2,6 +2,7 @@ import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import pluginCjs from '@rollup/plugin-commonjs'
 import pluginTs from 'rollup-plugin-typescript2'
+import replace from '@rollup/plugin-replace'
 
 const PACKAGE_PATH = resolve(__dirname, '../../packages')
 // ? 打包在node_modules里面
@@ -27,8 +28,11 @@ export function getPkgJSON(pkgName) {
   return JSON.parse(str)
 }
 
-export function getBaseRollupPlugins({ tsconfig = {} } = {}) {
+export function getBaseRollupPlugins({
+  alias = { __DEV__: true },
+  tsconfig = {}
+} = {}) {
   // 1. cjs转换为esm
   // 2. ts转换为js
-  return [pluginCjs(), pluginTs(tsconfig)]
+  return [replace(alias), pluginCjs(), pluginTs(tsconfig)]
 }

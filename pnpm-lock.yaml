@@ -7,6 +7,7 @@ importers:
       '@commitlint/cli': ^17.4.2
       '@commitlint/config-conventional': ^17.4.2
       '@rollup/plugin-commonjs': ^24.0.0
+      '@rollup/plugin-replace': ^5.0.2
       '@types/node': ^18.11.18
       '@typescript-eslint/eslint-plugin': ^5.48.2
       '@typescript-eslint/parser': ^5.48.2
@@ -24,6 +25,7 @@ importers:
       '@commitlint/cli': 17.4.2
       '@commitlint/config-conventional': 17.4.2
       '@rollup/plugin-commonjs': 24.0.0_rollup@3.10.0
+      '@rollup/plugin-replace': 5.0.2_rollup@3.10.0
       '@types/node': 18.11.18
       '@typescript-eslint/eslint-plugin': 5.48.2_caon6io6stgpr7lz2rtbhekxqy
       '@typescript-eslint/parser': 5.48.2_7uibuqfxkfaozanbtbziikiqje
@@ -336,6 +338,20 @@ packages:
       estree-walker: 2.0.2
       glob: 8.1.0
       is-reference: 1.2.1
+      magic-string: 0.27.0
+      rollup: 3.10.0
+    dev: true
+
+  /@rollup/plugin-replace/5.0.2_rollup@3.10.0:
+    resolution: {integrity: sha512-M9YXNekv/C/iHHK+cvORzfRYfPbq0RDD8r0G+bMiTXjNGKulPnCT9O3Ss46WfhI6ZOCgApOP7xAdmCQJ+U2LAA==}
+    engines: {node: '>=14.0.0'}
+    peerDependencies:
+      rollup: ^1.20.0||^2.0.0||^3.0.0
+    peerDependenciesMeta:
+      rollup:
+        optional: true
+    dependencies:
+      '@rollup/pluginutils': 5.0.2_rollup@3.10.0
       magic-string: 0.27.0
       rollup: 3.10.0
     dev: true

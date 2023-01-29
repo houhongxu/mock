@@ -22,7 +22,7 @@ export function createUpdate<State>(action: Action<State>): Update<State> {
 /**
  * 创建Update实例队列
  */
-export function createUpdateQueue<Action>(): UpdateQueue<Action> {
+export function createUpdateQueue<State>(): UpdateQueue<State> {
   // ? 这种数据格式为什么可以wip与current共用
   return {
     shared: {
