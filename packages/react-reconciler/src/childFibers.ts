@@ -39,6 +39,7 @@ function ChildReconciler(sholdTrackEffects: boolean) {
   function placeSingleChild(fiber: FiberNode) {
     // 追踪且首屏渲染
     if (sholdTrackEffects && fiber.alternate === null) {
+      // ! mount
       fiber.flags |= Placement
     }
 

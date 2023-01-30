@@ -103,12 +103,17 @@ function renderRoot(root: FiberRootNode) {
       break
     } catch (e) {
       if (__DEV__) {
-        console.warn('workInProgress发生错误', e)
+        console.warn('workLoop发生错误', e)
       }
 
       workInProgress = null
     }
   } while (true)
+
+  const finishedWork = root.current.alternate
+  root.finishedWork = finishedWork
+
+  commitRoot(root)
 }
 
 /**

@@ -24,6 +24,7 @@ export class FiberNode {
   alternate: FiberNode | null
 
   flags: Flags
+  subtreeFlags: Flags
 
   constructor(tag: WorkTag, pendingProps: Props, key: Key) {
     this.ref = null
@@ -60,6 +61,7 @@ export class FiberNode {
 
     // 副作用
     this.flags = NoFlags
+    this.subtreeFlags = NoFlags
   }
 }
 
@@ -90,16 +92,17 @@ export function createWorkInProgress(
   let wip = current.alternate
 
   if (wip === null) {
-    // mount
+    // ! mount
     // 根据current创建workInProgress节点
     wip = new FiberNode(current.tag, pendingProps, current.key)
     wip.stateNode = current.stateNode
     current.alternate = wip
   } else {
-    // update
+    // ! update
     // 更新属性并清除副作用
     wip.pendingProps = pendingProps
     wip.flags = NoFlags
+    wip.subtreeFlags = NoFlags
   }
   wip.type = current.type
   wip.updateQueue = current.updateQueue
