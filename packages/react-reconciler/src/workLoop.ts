@@ -3,6 +3,7 @@
 import { beginWork } from './beginWork'
 import { completeWork } from './completeWork'
 import { createWorkInProgress, FiberNode, FiberRootNode } from './fiber'
+import { MutationMask, NoFlags } from './fiberFlags'
 import { HostRoot } from './workTags'
 
 let workInProgress: FiberNode | null = null
@@ -86,6 +87,35 @@ function performUnitOfWork(fiber: FiberNode) {
 function workLoop() {
   while (workInProgress !== null) {
     performUnitOfWork(workInProgress)
+  }
+}
+
+function commitRoot(root: FiberRootNode) {
+  const finishedWork = root.finishedWork
+
+  if (finishedWork === null) {
+    return
+  }
+
+  if (__DEV__) {
+    console.warn('commit阶段开始', finishedWork)
+  }
+
+  root.finishedWork = null
+
+  // 判断是否需要执行
+  const subtreeHasFlags = (finishedWork.subtreeFlags & MutationMask) !== NoFlags
+  const rootHasFlags = (finishedWork.flags & MutationMask) !== NoFlags
+
+  if (subtreeHasFlags || rootHasFlags) {
+    // beforeMutation
+    // mutation
+
+    root.current = finishedWork
+
+    // layout
+  } else {
+    console.log('TODO')
   }
 }
 

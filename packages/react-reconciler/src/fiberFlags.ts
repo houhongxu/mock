@@ -8,3 +8,5 @@ export const ChildDelection = 0b00001000
 
 // 处理属性
 export const Update = 0b00000100
+
+export const MutationMask = Placement | ChildDelection | Update

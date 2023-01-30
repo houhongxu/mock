@@ -31,3 +31,11 @@ createRoot 创建 fiberRootNode(唯一),rootElement 对应 hostRootFiber，`<App
 ### mount 阶段 beginWork
 
 ### mount 阶段 completeWork
+
+## commit 阶段
+
+### beforeMutation
+
+### mutation
+
+### layout
