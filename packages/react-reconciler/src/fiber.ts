@@ -132,6 +132,8 @@ export function createWorkInProgress(
     // 根据current创建workInProgress节点
     wip = new FiberNode(current.tag, pendingProps, current.key)
     wip.stateNode = current.stateNode
+    // 双缓存
+    wip.alternate = current
     current.alternate = wip
   } else {
     // ! update

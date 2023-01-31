@@ -71,13 +71,15 @@ function commitPlacement(finishedWork: FiberNode) {
   // 获取父DOM
   const hostParent = getHostParent(finishedWork)
   // 插入DOM到父DOM中
-  appendPlacementNodeIntoContainer(finishedWork, hostParent)
+  if (hostParent !== null) {
+    appendPlacementNodeIntoContainer(finishedWork, hostParent)
+  }
 }
 
 /**
  * 获取父DOM
  */
-function getHostParent(fiber: FiberNode) {
+function getHostParent(fiber: FiberNode): Container | null {
   // 获取父fiberNode
   let parent = fiber.return
 
@@ -100,6 +102,8 @@ function getHostParent(fiber: FiberNode) {
       console.warn('未找到host parent')
     }
   }
+
+  return null
 }
 
 /**
@@ -109,12 +113,13 @@ function appendPlacementNodeIntoContainer(
   finishedWork: FiberNode,
   hostParent: Container
 ) {
-  // 如果当前fiberNode-finishedWork不包含离屏DOM则向下遍历
+  // 如果当前fiberNode-finishedWork包含离屏DOM挂载
   if (finishedWork.tag === HostComponent || finishedWork.tag === HostText) {
     appendChildToContainer(finishedWork.stateNode, hostParent)
     return
   }
 
+  // 如果不包含则遍历查找
   // ! 遍历所有子层fiberNode，有离屏DOM的挂载到父DOM
   // 获取子fiberNode
   const child = finishedWork.child

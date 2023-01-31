@@ -57,7 +57,6 @@ function ChildReconciler(shouldTrackEffects: boolean) {
     if (shouldTrackEffects && fiber.alternate === null) {
       fiber.flags |= Placement
     }
-
     return fiber
   }
 
