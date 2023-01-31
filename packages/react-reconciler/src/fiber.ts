@@ -6,24 +6,60 @@ import { FunctionComponent, HostComponent, WorkTag } from './workTags'
 export class FiberNode {
   ref: Ref
 
+  /**
+   * fiberNode类型
+   */
   tag: WorkTag
   key: Key
+  /**
+   * DOM类型，例如 <div/> 的type是'div'，FunctionComponent 是函数本身
+   */
   type: any
+  /**
+   * 对应DOM节点，HostComponent对应DOM节点，例如 HostComponent <div></div> 则stateNode指向div的DOM，而HostRoot因为没有对应的DOM,对应的DOM在fiberRootNode.container，所以指向fiberRootNode
+   */
   stateNode: any
 
+  /**
+   * 指向父fiberNode
+   */
   return: FiberNode | null
   sibling: FiberNode | null
   child: FiberNode | null
+  /**
+   * 兄弟fiberNode的索引，例如 <ul><li><li></ul>，则第一个li的index为0，第二个li为1
+   */
   index: number
 
+  /**
+   * 工作处理前的props
+   */
   pendingProps: Props
+  /**
+   * 工作处理后的props
+   */
   memoizedProps: Props
+  /**
+   * 更新前后的状态
+   */
   memoizedState: Props
+  /**
+   * 更新实例队列
+   */
   updateQueue: unknown
 
+  /**
+   * 指向该fiberNode在另一双缓存树对应的fiberNode
+   */
   alternate: FiberNode | null
 
+  /**
+   * 副作用
+   */
   flags: Flags
+  /**
+   * 子树的副作用
+   */
   subtreeFlags: Flags
 
   constructor(tag: WorkTag, pendingProps: Props, key: Key) {
@@ -32,51 +68,51 @@ export class FiberNode {
     // ! 实例化
     this.tag = tag
     this.key = key
-    // ? 例如 HostComponent <div></div> 则stateNode保存div的DOM，但是为什么hostRootFiber指向fiberRootNode
     this.stateNode = null
-    // 例如 FunctionComponent 的函数本身
     this.type = null
 
     // ! 构成树状结构
-    // 指向父FiberNode，return后由下一个工作单元执行，即父FiberNode
     this.return = null
-    // 右兄弟FiberNode
     this.sibling = null
     this.child = null
-    // 例如 <ul><li><li></ul>，则第一个li的index为0，第二个li为1
     this.index = 0
 
     // ! 作为工作单元
-    // 工作处理前的props
     this.pendingProps = pendingProps
-    // 工作处理后的props
     this.memoizedProps = null
-    // 更新后的状态
     this.memoizedState = null
-    // 更新实例队列
     this.updateQueue = null
 
-    // 指向该fiber在另一双缓存树对应的fiber
+    // ! 双缓存
     this.alternate = null
 
-    // 副作用
+    // ! 副作用
     this.flags = NoFlags
     this.subtreeFlags = NoFlags
   }
 }
 
 export class FiberRootNode {
+  /**
+   * ui容器，比如<div id='root'/>
+   */
   container: Container
+  /**
+   * 当前浏览器渲染的fiberNode
+   */
   current: FiberNode
+  /**
+   * 工作完成的hostRootFiber
+   */
   finishedWork: FiberNode | null
 
   constructor(container: Container, hostRootFiber: FiberNode) {
-    // ui容器比如DOM的根div
     this.container = container
-    // 当前浏览器渲染的fiber树
     this.current = hostRootFiber
+
+    // hostRootFiber指向fiberRootNode
     hostRootFiber.stateNode = this
-    // 工作完成的hostRootFiber
+
     this.finishedWork = null
   }
 }
@@ -114,21 +150,25 @@ export function createWorkInProgress(
 }
 
 /**
- * 根据ReactElement创建FiberNode
+ * 根据ReactElement创建fiberNode
  */
 export function createFiberFromElement(element: ReactElement): FiberNode {
   const { type, key, props } = element
 
+  // 默认的fiberTag
   let fiberTag: WorkTag = FunctionComponent
 
   if (typeof type === 'string') {
+    // 例如 <div/> 的type是'div'
     fiberTag = HostComponent
   } else if (typeof type !== 'function' && __DEV__) {
     console.warn('未定义的type类型', element)
   }
 
+  // 创建fiberNode
   const fiber = new FiberNode(fiberTag, props, key)
 
+  // 记录DOM类型
   fiber.type = type
 
   return fiber

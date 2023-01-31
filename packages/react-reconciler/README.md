@@ -28,9 +28,15 @@ createRoot 创建 fiberRootNode(唯一),rootElement 对应 hostRootFiber，`<App
 
 ## render 阶段
 
-### mount 阶段 beginWork
+beginWork 与 completeWork 都分为 mount 与 update 阶段
 
-### mount 阶段 completeWork
+### beginWork
+
+[递]工作，一直向下处理子节点
+
+### completeWork
+
+[归]工作，先看是否有兄弟节点，如果有则处理兄弟节点使其继续[递]工作，如果没有则返回父节点
 
 ## commit 阶段
 

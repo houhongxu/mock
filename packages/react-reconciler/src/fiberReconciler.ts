@@ -11,11 +11,11 @@ import { scheduleUpdateOnFiber } from './workLoop'
 import { HostRoot } from './workTags'
 
 /**
- * 创建fiberRootNode
- * @description 在ReactDOM.createRoot()中执行
+ * 创建fiberRootNode与hostRootFiber-current
+ * @description 在ReactDOM.createRoot(container)中执行
  */
 export function createContainer(container: Container) {
-  // 初始化hostRootFiber
+  // 初始化hostRootFiber-current，此处打上了HostRoot的tag
   const hostRootFiber = new FiberNode(HostRoot, {}, null)
   // 初始化fiberRootNode
   const root = new FiberRootNode(container, hostRootFiber)
@@ -26,7 +26,7 @@ export function createContainer(container: Container) {
 
 /**
  * 更新fiberRootNode
- * @description 在ReactDOM.createRoot().render()中执行
+ * @description 在ReactDOM.createRoot(container).render(<App/>)中执行
  */
 export function updateContainer(
   element: ReactElement | null,
@@ -41,7 +41,7 @@ export function updateContainer(
     hostRootFiber.updateQueue as UpdateQueue<ReactElement | null>,
     update
   )
-  // fiber可以开始调度上方的更新
+  // 开始从hostRootFiber调度更新
   scheduleUpdateOnFiber(hostRootFiber)
   return element
 }

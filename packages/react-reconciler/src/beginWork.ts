@@ -1,4 +1,4 @@
-// 递归中的递阶段，进行结构处理，标记Placement与ChildDeletion，不进行Update
+// 递归中的[递]工作，进行结构处理，标记Placement与ChildDeletion，不进行Update
 
 import { ReactElement } from 'shared/ReactTypes'
 import { mountChildFibers, reconcileChildFibers } from './childFibers'
@@ -6,57 +6,11 @@ import { FiberNode } from './fiber'
 import { processUpdateQueue, UpdateQueue } from './updateQueue'
 import { HostRoot, HostComponent, HostText } from './workTags'
 
-function reconcileChildren(wip: FiberNode, children?: ReactElement) {
-  const current = wip.alternate
-
-  if (current !== null) {
-    // update
-    // 进行子FiberNode对比
-    wip.child = reconcileChildFibers(wip, current?.child, children)
-  } else {
-    // mount
-    wip.child = mountChildFibers(wip, null, children)
-  }
-}
-
 /**
- * 获取子FiberNode
- */
-function updateHostComponent(wip: FiberNode) {
-  const nextProps = wip.pendingProps
-  const nextChildren = nextProps.children
-
-  reconcileChildren(wip, nextChildren)
-  return wip.child
-}
-
-/**
- * 更新状态并获取子FiberNode
- */
-function updateHostRoot(wip: FiberNode) {
-  // 更新状态
-  const baseState = wip.memoizedState
-  const updateQueue = wip.updateQueue as UpdateQueue<Element>
-  const pending = updateQueue.shared.pending
-  updateQueue.shared.pending = null
-
-  const { memoizedState } = processUpdateQueue(baseState, pending)
-
-  wip.memoizedState = memoizedState
-
-  // 获取子ReactElement，而需要对比的子FiberNode为wip.alternate?.child
-  const nextChildren = wip.memoizedState
-
-  // 获取更新后的子FiberNode
-  reconcileChildren(wip, nextChildren)
-  return wip.child
-}
-
-/**
- * 开始工作
+ * 开始[递]工作
+ * @description 根据传入的fiberNode创建子fiberNode，并将这两个fiberNode连接起来
  */
 export function beginWork(wip: FiberNode) {
-  // 比较子节点的ReactElement与FiberNode，返回子FiberNode
   switch (wip.tag) {
     case HostRoot:
       return updateHostRoot(wip)
@@ -72,4 +26,57 @@ export function beginWork(wip: FiberNode) {
   }
 
   return null
+}
+
+/**
+ * 更新HostRoot状态并获取子fiberNode
+ */
+function updateHostRoot(wip: FiberNode) {
+  // 获取当前状态
+  const baseState = wip.memoizedState
+  // 获取更新实例队列
+  const updateQueue = wip.updateQueue as UpdateQueue<ReactElement>
+  // 获取更新实例
+  const pending = updateQueue.shared.pending
+  updateQueue.shared.pending = null
+  // 获取更新后的状态并更新
+  const { memoizedState } = processUpdateQueue(baseState, pending)
+  wip.memoizedState = memoizedState
+
+  // 获取子ReactElement，而需要对比的子FiberNode为wip.alternate?.child
+  const nextChildren = wip.memoizedState
+
+  // 获取更新后的子fiberNode
+  reconcileChildren(wip, nextChildren)
+  return wip.child
+}
+
+/**
+ * 获取子fiberNode
+ */
+function updateHostComponent(wip: FiberNode) {
+  // 获取子ReactElement
+  const nextProps = wip.pendingProps
+  const nextChildren = nextProps.children
+
+  reconcileChildren(wip, nextChildren)
+  return wip.child
+}
+
+/**
+ * 协调子fiberNode-current与子ReactElement，返回协调好的fiberNode-workInProgress
+ */
+function reconcileChildren(wip: FiberNode, children?: ReactElement) {
+  // 获取fiberNode-current
+  const current = wip.alternate
+
+  // 获取fiberNode-workInProgress
+  if (current !== null) {
+    // ! update
+    // 因为mount是hostRootFiber是同时有current与workInprogress的，所以进入此处进行了根节点副作用标记
+    wip.child = reconcileChildFibers(wip, current?.child, children)
+  } else {
+    // ! mount
+    wip.child = mountChildFibers(wip, null, children)
+  }
 }

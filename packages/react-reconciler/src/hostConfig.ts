@@ -22,3 +22,7 @@ export function createTextInstance(...args: any) {
 export function appendInitialChild(...args: any) {
   return {} as any
 }
+
+export function appendChildToContainer(...args: any) {
+  return {} as any
+}
