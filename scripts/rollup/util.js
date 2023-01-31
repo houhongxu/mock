@@ -29,7 +29,10 @@ export function getPkgJSON(pkgName) {
 }
 
 export function getBaseRollupPlugins({
-  alias = { __DEV__: true },
+  alias = {
+    __DEV__: true,
+    preventAssignment: true
+  },
   tsconfig = {}
 } = {}) {
   // 1. cjs转换为esm

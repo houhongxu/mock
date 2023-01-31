@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "lint": "eslint --ext .js,.ts,.jsx,.tsx ./packages",
-    "build:dev": "rm -rf dist && rollup --bundleConfigAsCjs --config scripts/rollup/react.config.js"
+    "build:dev": "rm -rf dist && rollup --bundleConfigAsCjs --config scripts/rollup/dev.config.js"
   },
   "keywords": [],
   "author": "",
@@ -12,6 +12,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.4.2",
     "@commitlint/config-conventional": "^17.4.2",
+    "@rollup/plugin-alias": "^4.0.3",
     "@rollup/plugin-commonjs": "^24.0.0",
     "@rollup/plugin-replace": "^5.0.2",
     "@types/node": "^18.11.18",

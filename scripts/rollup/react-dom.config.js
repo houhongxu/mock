@@ -1,10 +1,11 @@
-// 打包React
+// 打包ReactDOM
 
 import generatePackageJson from 'rollup-plugin-generate-package-json'
 import { getBaseRollupPlugins, getPkgJSON, resolvePkgPath } from './util'
+import aias from '@rollup/plugin-alias'
 
 // 获取包的package.json的name包名属性和module入口属性
-const { name, module } = getPkgJSON('react')
+const { name, module } = getPkgJSON('react-dom')
 // 根据包名获取包入口路径
 const pkgPath = resolvePkgPath(name)
 // 根据包名获取产物路径
@@ -13,17 +14,29 @@ const pkgDistPath = resolvePkgPath(name, true)
 const basePlugins = getBaseRollupPlugins()
 
 export default [
-  // react
+  // Reactv17的react-dom与Reactv18的react-dom/client
   {
     input: `${pkgPath}/${module}`,
-    output: {
-      file: `${pkgDistPath}/index.js`,
-      // ? 为什么需要改成react
-      name: 'index.js',
-      format: 'umd'
-    },
+    output: [
+      {
+        file: `${pkgDistPath}/index.js`,
+        name: 'index.js',
+        format: 'umd'
+      },
+      {
+        file: `${pkgDistPath}/client.js`,
+        name: 'client.js',
+        format: 'umd'
+      }
+    ],
     plugins: [
       ...basePlugins,
+      // 解析路径别名
+      aias({
+        entries: {
+          hostConfig: `${pkgPath}/src/hostConfig.ts`
+        }
+      }),
       // 自定义生成打包产物的package.json
       generatePackageJson({
         inputFolder: pkgPath,
@@ -32,27 +45,12 @@ export default [
           name,
           description,
           version,
+          peerDependencies: {
+            react: version
+          },
           main: 'index.js' // 由umd支持
         })
       })
     ]
-  },
-  {
-    input: `${pkgPath}/src/jsx.ts`,
-    output: [
-      // jsx-runtime
-      {
-        file: `${pkgDistPath}/jsx-runtime.js`,
-        name: 'jsx-runtime.js',
-        format: 'umd'
-      },
-      // jsx-dev-runtime
-      {
-        file: `${pkgDistPath}/jsx-dev-runtime.js`,
-        name: 'jsx-dev-runtime.js',
-        format: 'umd'
-      }
-    ],
-    plugins: basePlugins
   }
 ]
