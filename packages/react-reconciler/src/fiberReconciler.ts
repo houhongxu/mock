@@ -32,6 +32,8 @@ export function updateContainer(
   element: ReactElement | null,
   root: FiberRootNode
 ) {
+  console.log('1131')
+
   // 获取hostRootFiber-current
   const hostRootFiber = root.current
   // 创建更新实例

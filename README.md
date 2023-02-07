@@ -26,6 +26,8 @@ test
 
 - 回到项目根目录，执行 npx create-react-app [pkgName]-test 创建调试项目，执行 pnpm link [pkgName] --global 给调试项目引入全局的调试包
 
+## dev 模式调试
+
 ## react
 
 - react jsx->没有编译优化->协调渲染->宿主环境 api->UI，所以是运行时框架

@@ -18,7 +18,8 @@
   },
   "plugins": [
     "@typescript-eslint", // ts规则合集
-    "prettier"
+    "prettier",
+    "react-refresh"
   ],
   "rules": {
     // 自定义规则
@@ -27,6 +28,8 @@
     "no-constant-condition": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-unused-vars": "off",
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "off",
+    // 热更新
+    "react-refresh/only-export-components": "warn"
   }
 }
