@@ -7,7 +7,12 @@ import {
 } from 'hostConfig'
 import { FiberNode } from './fiber'
 import { NoFlags } from './fiberFlags'
-import { HostComponent, HostRoot, HostText } from './workTags'
+import {
+  FunctionComponent,
+  HostComponent,
+  HostRoot,
+  HostText
+} from './workTags'
 
 /**
  * 完成[归]工作
@@ -52,6 +57,11 @@ export function completeWork(wip: FiberNode) {
       return null
 
     case HostRoot:
+      bubbleProperties(wip)
+
+      return null
+
+    case FunctionComponent:
       bubbleProperties(wip)
 
       return null

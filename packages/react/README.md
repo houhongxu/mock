@@ -10,6 +10,7 @@
 - react17 之后是 react/jsx-runtime 里的 jsx 方法，与编译器合作，不需要导入 React
 
 > [详情见官方链接](https://zh-hans.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
+> [babel 实现插件](https://babeljs.io/docs/en/babel-plugin-transform-react-jsx#docsNav)
 
 ### 运行时
 

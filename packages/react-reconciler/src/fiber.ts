@@ -32,7 +32,7 @@ export class FiberNode {
   index: number
 
   /**
-   * 工作处理前的props
+   * 工作处理前的props，此props就是react的数据流
    */
   pendingProps: Props
   /**

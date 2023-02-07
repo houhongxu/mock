@@ -34,9 +34,13 @@ beginWork 与 completeWork 都分为 mount 与 update 阶段
 
 [递]工作，一直向下处理子节点
 
+生成 fiberNode 树
+
 ### completeWork
 
 [归]工作，先看是否有兄弟节点，如果有则处理兄弟节点使其继续[递]工作，如果没有则返回父节点
+
+生成对应离屏 dom 树
 
 ## commit 阶段
 

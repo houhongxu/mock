@@ -23,7 +23,7 @@ export function createUpdate<State>(action: Action<State>): Update<State> {
  * 创建Update实例队列
  */
 export function createUpdateQueue<State>(): UpdateQueue<State> {
-  // ? 这种数据格式为什么可以wip与current共用
+  // ? 这种数据格式为什么可以wip与current共用，因为指向更新环装链表
   return {
     shared: {
       pending: null
