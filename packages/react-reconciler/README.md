@@ -49,3 +49,7 @@ beginWork 与 completeWork 都分为 mount 与 update 阶段
 ### mutation
 
 ### layout
+
+## hooks
+
+fiberNode 的 memoizedState 指向 hooks 函数链表

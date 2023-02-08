@@ -9,8 +9,7 @@
 - react17 之前是 React.createElement 方法，需要导入 React
 - react17 之后是 react/jsx-runtime 里的 jsx 方法，与编译器合作，不需要导入 React
 
-> [详情见官方链接](https://zh-hans.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html)
-> [babel 实现插件](https://babeljs.io/docs/en/babel-plugin-transform-react-jsx#docsNav)
+> [详情见官方链接](https://zh-hans.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html) > [babel 实现插件](https://babeljs.io/docs/en/babel-plugin-transform-react-jsx#docsNav)
 
 ### 运行时
 
@@ -42,3 +41,11 @@ Object.hasOwn 解决的问题：
 - 方便拓展（不仅作为数据存储单元，也能作为工作单元）
 
 jsx->ReactElement->FiberNode->DOMElement
+
+## hooks
+
+hooks 函数需要有感知上下文环境的能力与感知是 mount 还是 update 阶段的能力
+
+所以需要在每个上下文与阶段实现
+
+但是是在 react 包导出，所以需要一个内部数据共享层

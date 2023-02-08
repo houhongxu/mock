@@ -5,7 +5,7 @@ import { getBaseRollupPlugins, getPkgJSON, resolvePkgPath } from './util'
 import aias from '@rollup/plugin-alias'
 
 // 获取包的package.json的name包名属性和module入口属性
-const { name, module } = getPkgJSON('react-dom')
+const { name, module, peerDependencies } = getPkgJSON('react-dom')
 // 根据包名获取包入口路径
 const pkgPath = resolvePkgPath(name)
 // 根据包名获取产物路径
@@ -29,6 +29,7 @@ export default [
         format: 'umd'
       }
     ],
+    external: [...Object.keys(peerDependencies)], // 避免因为hook的内部数据共享层把react打包进来，这样只剩react的内部数据共享层，实现共用
     plugins: [
       ...basePlugins,
       // 解析路径别名
