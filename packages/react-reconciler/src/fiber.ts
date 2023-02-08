@@ -40,7 +40,7 @@ export class FiberNode {
    */
   memoizedProps: Props
   /**
-   * 更新前后的状态
+   * 更新前后的状态，函数组件中指向hook链表
    */
   memoizedState: Props
   /**

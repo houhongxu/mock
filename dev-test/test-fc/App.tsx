@@ -1,10 +1,11 @@
+import { useState } from 'react'
+
 export function App() {
-  return (
-    <div>
-      <Child />
-    </div>
-  )
+  const [num, setNum] = useState(100)
+  window.setNum = setNum
+  return <div>{num}</div>
 }
+
 function Child() {
   return <span>hhx</span>
 }
