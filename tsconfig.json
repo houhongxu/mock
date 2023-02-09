@@ -1,5 +1,6 @@
 {
   "compileOnSave": true,
+  "include": ["./packages/**/*"], // 限制业务代码范围，打包时忽略dev-test等测试文件夹
   "compilerOptions": {
     "target": "ESNext",
     "useDefineForClassFields": true,
