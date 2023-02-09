@@ -15,7 +15,7 @@ let currentlyRenderingFiber: FiberNode | null = null
 // 当前调用的hook
 let workInProgressHook: Hook | null = null
 
-// 获取内部共享数据层的hook
+// 获取内部共享数据层的指针
 const { currentDispatcher } = internals
 
 interface Hook {
@@ -36,6 +36,7 @@ export function renderWithHooks(wip: FiberNode) {
     // ! update
   } else {
     // ! mount
+    // 内部共享数据层的指针指向当前节点的hook集合
     currentDispatcher.current = HooksDispatcherOnMount
   }
 
