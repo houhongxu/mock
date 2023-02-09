@@ -38,3 +38,7 @@ pnpm dev
 
 1. 与[react17 源码调试](https://react.iamkasong.com/)的各章节流程概览结合，将各个流程整理成笔记
 2. 手写的 react 与 react 源码一起对比调试熟练并记录
+
+## pr
+
+- [x] [修复 updateHostRoot 中的类型问题](https://github.com/BetaSu/big-react/pull/37)
