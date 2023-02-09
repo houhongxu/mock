@@ -3,7 +3,14 @@ import currentDispatcher, {
   Dispatcher,
   resolveDispatcher
 } from './src/currentDispatcher'
-import { jsxDEV } from './src/jsx'
+import { jsx, jsxDEV, isValidElement as isValidElementFn } from './src/jsx'
+
+export const version = '0.0.0'
+
+// TODO 根据环境区分使用jsx/jsxDDEV
+export const createElement = jsx
+
+export const isValidElement = isValidElementFn
 
 export const useState: Dispatcher['useState'] = (initialState: any) => {
   const dispatcher = resolveDispatcher()
@@ -13,9 +20,4 @@ export const useState: Dispatcher['useState'] = (initialState: any) => {
 // 内部数据共享层
 export const __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED = {
   currentDispatcher
-}
-
-export default {
-  version: '0.0.0',
-  createElement: jsxDEV
 }
