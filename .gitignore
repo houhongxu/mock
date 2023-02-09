@@ -2,4 +2,4 @@
 .history
 .vscode
 /dist
-/react-test
+/prod-test
