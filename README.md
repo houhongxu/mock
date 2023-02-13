@@ -42,3 +42,7 @@ pnpm dev
 ## pr
 
 - [x] [修复 updateHostRoot 中的类型问题](https://github.com/BetaSu/big-react/pull/37)
+
+## question
+
+- [ ] fiber 的遍历是递归吗，仅仅是循环遍历，似乎不算递归 ？
