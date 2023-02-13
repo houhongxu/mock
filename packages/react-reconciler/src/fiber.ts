@@ -61,6 +61,10 @@ export class FiberNode {
    * 子树的副作用
    */
   subtreeFlags: Flags
+  /**
+   * 需要删除的fiberNode
+   */
+  deletions: FiberNode[] | null
 
   constructor(tag: WorkTag, pendingProps: Props, key: Key) {
     this.ref = null
@@ -89,6 +93,7 @@ export class FiberNode {
     // ! 副作用
     this.flags = NoFlags
     this.subtreeFlags = NoFlags
+    this.deletions = null
   }
 }
 
@@ -118,7 +123,7 @@ export class FiberRootNode {
 }
 
 /**
- * 创建或更新workInProgress
+ * 创建workInProgress，新增workInProgress或复用current为workInProgress
  */
 export function createWorkInProgress(
   current: FiberNode,
@@ -141,6 +146,7 @@ export function createWorkInProgress(
     wip.pendingProps = pendingProps
     wip.flags = NoFlags
     wip.subtreeFlags = NoFlags
+    wip.deletions = null
   }
   wip.type = current.type
   wip.updateQueue = current.updateQueue

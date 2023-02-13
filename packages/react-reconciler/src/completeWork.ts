@@ -6,7 +6,7 @@ import {
   createTextInstance
 } from 'hostConfig'
 import { FiberNode } from './fiber'
-import { NoFlags } from './fiberFlags'
+import { NoFlags, Update } from './fiberFlags'
 import {
   FunctionComponent,
   HostComponent,
@@ -44,6 +44,12 @@ export function completeWork(wip: FiberNode) {
     case HostText:
       if (current !== null && wip.stateNode) {
         // ! update
+        const oldText = current.memoizedProps.content
+        const newText = newProps.content
+
+        if (oldText !== newText) {
+          markUpdate(wip)
+        }
       } else {
         // ! mount
         // 创建DOM-workInProgress
@@ -139,4 +145,11 @@ function bubbleProperties(wip: FiberNode) {
   }
 
   wip.subtreeFlags |= subtreeFlags
+}
+
+/**
+ * 标记更新
+ */
+function markUpdate(fiber: FiberNode) {
+  fiber.flags |= Update
 }

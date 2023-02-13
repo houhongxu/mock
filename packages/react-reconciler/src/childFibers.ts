@@ -2,9 +2,13 @@
 // mount时仅对根节点进行副作用标记，则插入离屏DOM时整树插入
 
 import { REACT_ELEMENT_TYPE } from 'shared/ReactSymbols'
-import { ReactElement } from 'shared/ReactTypes'
-import { createFiberFromElement, FiberNode } from './fiber'
-import { Placement } from './fiberFlags'
+import { Props, ReactElement } from 'shared/ReactTypes'
+import {
+  createFiberFromElement,
+  createWorkInProgress,
+  FiberNode
+} from './fiber'
+import { ChildDeletion, Placement } from './fiberFlags'
 import { HostText } from './workTags'
 
 /**
@@ -22,6 +26,34 @@ function ChildReconciler(shouldTrackEffects: boolean) {
     currentFiber: FiberNode | null,
     element: ReactElement
   ) {
+    // ! update
+    const key = element.key
+    work: if (currentFiber !== null) {
+      if (currentFiber.key === key) {
+        if (element.$$typeof === REACT_ELEMENT_TYPE) {
+          if (currentFiber.type === element.type) {
+            // 复用
+            const existing = useFiber(currentFiber, element.props)
+            // 建立父子关系
+            existing.return = returnFiber
+            return existing
+          }
+          // 删除旧fiberNode 因为type不同
+          deleteChild(returnFiber, currentFiber)
+          break work
+        } else {
+          if (__DEV__) {
+            console.warn('还未实现的react类型', element)
+            break work
+          }
+        }
+      } else {
+        // 删除旧fiberNode
+        deleteChild(returnFiber, currentFiber)
+      }
+    }
+
+    // ! mount
     // 获取根据ReactElement创建的fiberNode
     const fiber = createFiberFromElement(element)
     // 建立父子关系
@@ -39,12 +71,53 @@ function ChildReconciler(shouldTrackEffects: boolean) {
     currentFiber: FiberNode | null,
     content: string | number
   ) {
+    // ! update
+    if (currentFiber !== null) {
+      if (currentFiber.tag === HostText) {
+        // 复用
+        const existing = useFiber(currentFiber, { content })
+        // 建立父子关系
+        existing.return = returnFiber
+        return existing
+      }
+      deleteChild(returnFiber, currentFiber)
+    }
+
+    // ! mount
     // 获取根据文本内容创建的fiberNode
     const fiber = new FiberNode(HostText, { content }, null)
     // 连接父fiberNode
     fiber.return = returnFiber
 
     return fiber
+  }
+
+  /**
+   * 记录需要删除的子fiberNode
+   */
+  function deleteChild(returnFiber: FiberNode, childToDelete: FiberNode) {
+    if (!shouldTrackEffects) {
+      return
+    }
+
+    const delections = returnFiber.deletions
+
+    if (delections === null) {
+      returnFiber.deletions = [childToDelete]
+      returnFiber.flags != ChildDeletion
+    } else {
+      delections.push(childToDelete)
+    }
+  }
+
+  /**
+   * 复用current
+   */
+  function useFiber(fiber: FiberNode, pendingProps: Props): FiberNode {
+    const clone = createWorkInProgress(fiber, pendingProps)
+    clone.index = 0
+    clone.sibling = null
+    return clone
   }
 
   /**
@@ -88,6 +161,11 @@ function ChildReconciler(shouldTrackEffects: boolean) {
       return placeSingleChild(
         reconcileSingleTextNode(returnFiber, currentFiber, newChild)
       )
+    }
+
+    if (currentFiber !== null) {
+      // ! 兜底则删除
+      deleteChild(returnFiber, currentFiber)
     }
 
     if (__DEV__) {
