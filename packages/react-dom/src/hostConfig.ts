@@ -1,5 +1,7 @@
 import { FiberNode } from 'react-reconciler/src/fiber'
-import { HostText } from 'react-reconciler/src/workTags'
+import { HostComponent, HostText } from 'react-reconciler/src/workTags'
+import { Props } from 'shared/ReactTypes'
+import { DOMElement, updateFiberProps } from './SyntheticEvent'
 
 export type Container = Element
 export type Instance = Element
@@ -8,10 +10,12 @@ export type TextInstance = Text
 /**
  * 创建DOM
  */
-export function createInstance(type: string, props: any): Instance {
-  // TODO 处理props
-  const element = document.createElement(type)
-  return element
+export function createInstance(type: string, props: Props): Instance {
+  const element = document.createElement(type) as unknown
+
+  updateFiberProps(element as DOMElement, props)
+
+  return element as DOMElement
 }
 
 /**

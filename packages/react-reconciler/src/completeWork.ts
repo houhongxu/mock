@@ -5,6 +5,7 @@ import {
   createInstance,
   createTextInstance
 } from 'hostConfig'
+import { updateFiberProps } from 'react-dom/src/SyntheticEvent'
 import { FiberNode } from './fiber'
 import { NoFlags, Update } from './fiberFlags'
 import {
@@ -28,6 +29,10 @@ export function completeWork(wip: FiberNode) {
     case HostComponent:
       if (current !== null && wip.stateNode) {
         // ! update
+
+        // TODO 判断props是否变化 变化则标记Update 标记后在react-dom的hostConfig里处理
+        // TODO 下方是临时处理
+        updateFiberProps(wip.stateNode, newProps)
       } else {
         // ! mount
         // 创建DOM-workInProgress，因为是[归]，所以肯定在DOM树中最上方

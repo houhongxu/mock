@@ -87,6 +87,8 @@ function mountState<State>(
   } else {
     memoizedState = initialState
   }
+  // 保存用户传入的状态
+  hook.memoizedState = memoizedState
 
   // 创建更新队列实例
   const queue = createUpdateQueue<State>()
