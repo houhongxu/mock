@@ -11,6 +11,8 @@
 
 ## 更新
 
+更新实例是链表，多个更新存在时顺序执行
+
 ### react 更新方法
 
 - ReactDOM.createRoot().render（或老版的 ReactDOM.render）

@@ -49,6 +49,8 @@ function updateHostRoot(wip: FiberNode) {
   updateQueue.shared.pending = null
   // 获取更新后的状态并更新
   const { memoizedState } = processUpdateQueue(baseState, pending)
+
+  // ! 第一次mount时是react根组件对应的ReactElement
   wip.memoizedState = memoizedState
 
   // 获取子ReactElement，而需要对比的子FiberNode为wip.alternate?.child
@@ -71,6 +73,9 @@ function updateHostComponent(wip: FiberNode) {
   return wip.child
 }
 
+/**
+ * 获取函数组件处理后的子fiberNode
+ */
 function updateFunctionComponent(wip: FiberNode) {
   // 获取子ReactElement
   const nextChildren = renderWithHooks(wip)
@@ -80,7 +85,7 @@ function updateFunctionComponent(wip: FiberNode) {
 }
 
 /**
- * 协调子fiberNode-current与子ReactElement，返回协调好的fiberNode-workInProgress
+ * !!! 协调子fiberNode-current与子ReactElement，返回协调好的fiberNode-workInProgress
  */
 function reconcileChildren(wip: FiberNode, children?: ReactElement) {
   // 获取fiberNode-current
@@ -88,8 +93,8 @@ function reconcileChildren(wip: FiberNode, children?: ReactElement) {
 
   // 获取fiberNode-workInProgress
   if (current !== null) {
-    // ! update
-    // 因为mount是hostRootFiber是同时有current与workInprogress的，所以进入此处进行了根节点副作用标记
+    // ! update，因为有已渲染的fiberNode-current树
+    // ! 因为mount是hostRootFiber是同时有current与workInprogress的，所以进入此处进行了根节点副作用标记，mount时仅标记根节点可以性能优化，将子树一起插入div-root
     wip.child = reconcileChildFibers(wip, current?.child, children)
   } else {
     // ! mount

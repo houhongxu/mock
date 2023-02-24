@@ -1,4 +1,4 @@
-// 递归中的[归]工作
+// 递归中的[归]工作，处理副作用并生成离屏DOM
 
 import {
   appendInitialChild,
@@ -15,7 +15,7 @@ import {
 } from './workTags'
 
 /**
- * 完成[归]工作
+ * !!! 完成[归]工作
  * @description 从最深层开始，一层层创建离屏DOM树
  */
 export function completeWork(wip: FiberNode) {
@@ -63,11 +63,13 @@ export function completeWork(wip: FiberNode) {
       return null
 
     case HostRoot:
+      // 没有离屏DOM
       bubbleProperties(wip)
 
       return null
 
     case FunctionComponent:
+      // 没有离屏DOM
       bubbleProperties(wip)
 
       return null
@@ -122,8 +124,8 @@ function appendAllChildren(parent: any, wip: FiberNode) {
 }
 
 /**
- * 查找标记副作用的fiberNode
- * @description 性能优化,利用completeWork向上[归]的流程，将子层所有fiberNode的flags冒泡到父fiberNode
+ * 收集子fiberNode副作用，只收集一层因为是递归向上的，子层已经包含了孙子层的副作用
+ * @description 性能优化,利用completeWork向上[归]的流程，将子层所有fiberNode的flags冒泡到当前fiberNode
  */
 function bubbleProperties(wip: FiberNode) {
   // 初始化子树副作用
@@ -133,9 +135,9 @@ function bubbleProperties(wip: FiberNode) {
 
   // ! 遍历所有子fiberNode
   while (child !== null) {
-    // 子树副作用标记当前节点子节点的flags
+    // 标记当前节点所有孩子节点的flags
     subtreeFlags |= child.subtreeFlags
-    // 子树副作用标记当前节点的flags
+    // 标记当前节点的flags
     subtreeFlags |= child.flags
 
     // ! 兜底 连接child与父，因为该错误很难排查
@@ -144,6 +146,7 @@ function bubbleProperties(wip: FiberNode) {
     child = child.sibling
   }
 
+  // 收集到子树副作用属性
   wip.subtreeFlags |= subtreeFlags
 }
 

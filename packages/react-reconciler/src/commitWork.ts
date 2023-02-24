@@ -1,3 +1,5 @@
+// 消费副作用进行DOM操作并挂载DOM树在div-root
+
 import {
   appendChildToContainer,
   commitUpdate,
@@ -23,7 +25,7 @@ import {
 let nextEffect: FiberNode | null = null
 
 /**
- * 处理副作用，返回完整的离谱DOM树
+ * 消费副作用，构建完整的DOM树并挂载在div-root
  */
 export function commitMutationEffects(finishedWork: FiberNode) {
   nextEffect = finishedWork
@@ -131,10 +133,10 @@ function getHostParent(fiber: FiberNode): Container | null {
 
     // 未获取到则[归]到上一层父fiberNode
     parent = parent.return
+  }
 
-    if (__DEV__) {
-      console.warn('未找到host parent')
-    }
+  if (__DEV__) {
+    console.warn('未找到host parent')
   }
 
   return null
@@ -142,6 +144,7 @@ function getHostParent(fiber: FiberNode): Container | null {
 
 /**
  * 插入DOM到父DOM中
+ * @description 在此处最后将离屏DOM树挂载到div-root完成渲染
  */
 function appendPlacementNodeIntoContainer(
   finishedWork: FiberNode,
@@ -201,11 +204,11 @@ function commitDeletion(childToDelete: FiberNode) {
         }
     }
   })
-  // 移除rootHostNode对应的离谱DOM
+  // 移除rootHostNode对应的离屏DOM
   if (rootHostNode !== null) {
     const hostParent = getHostParent(childToDelete)
     if (hostParent !== null) {
-      removeChild(rootHostNode, hostParent)
+      removeChild((rootHostNode as FiberNode).stateNode, hostParent)
     }
   }
 
@@ -213,8 +216,9 @@ function commitDeletion(childToDelete: FiberNode) {
   childToDelete.return = null
   childToDelete.child = null
 }
+
 /**
- * 遍历子树移除离谱DOM
+ * 遍历子树移除离屏DOM
  */
 function commitNestedComponent(
   root: FiberNode,

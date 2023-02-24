@@ -66,6 +66,9 @@ export class FiberNode {
    */
   deletions: FiberNode[] | null
 
+  /**
+   * 创建fiberNode实例，并记录tag，pendingProps，key，初始化剩余属性
+   */
   constructor(tag: WorkTag, pendingProps: Props, key: Key) {
     this.ref = null
 
@@ -111,6 +114,9 @@ export class FiberRootNode {
    */
   finishedWork: FiberNode | null
 
+  /**
+   * 创建FiberRootNode，并记录container与hostRootFiber，初始化finishedWork
+   */
   constructor(container: Container, hostRootFiber: FiberNode) {
     this.container = container
     this.current = hostRootFiber
@@ -123,7 +129,7 @@ export class FiberRootNode {
 }
 
 /**
- * 创建workInProgress，新增workInProgress或复用current为workInProgress
+ * 创建workInProgress，新增workInProgress或复用current为workInProgress,并记录pendingProps
  */
 export function createWorkInProgress(
   current: FiberNode,

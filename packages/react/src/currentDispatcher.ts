@@ -12,6 +12,9 @@ const currentDispatcher: {
   current: null
 }
 
+/**
+ * 获取当前内部共享层的hook
+ */
 export const resolveDispatcher = () => {
   const dispatcher = currentDispatcher.current
 

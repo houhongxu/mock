@@ -13,7 +13,8 @@ export interface UpdateQueue<State> {
 }
 
 /**
- * 创建Update实例
+ * 创建Update实例，将ReactElement保存在action中
+ * @description 更新链表TODO
  */
 export function createUpdate<State>(action: Action<State>): Update<State> {
   return {

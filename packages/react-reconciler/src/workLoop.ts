@@ -1,4 +1,4 @@
-// 工作循环
+// 工作循环，workInProgress从hostRootFiber开始
 
 import { beginWork } from './beginWork'
 import { commitMutationEffects } from './commitWork'
@@ -99,7 +99,7 @@ function workLoop() {
 function performUnitOfWork(fiber: FiberNode) {
   // 开始[递]工作并获取子fiberNode
   const next = beginWork(fiber)
-  // TODO 更新props为工作处理后的props 目前beginWork-mount实现里还没更新
+  // 存储prop为叶子fiberNode的props
   fiber.memoizedProps = fiber.pendingProps
 
   if (next === null) {

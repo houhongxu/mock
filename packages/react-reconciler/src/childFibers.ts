@@ -1,5 +1,5 @@
 // ! beginWork性能优化
-// mount时仅对根节点进行副作用标记，则插入离屏DOM时整树插入
+// ! mount时仅对根节点进行副作用标记，则插入离屏DOM时整树插入
 
 import { REACT_ELEMENT_TYPE } from 'shared/ReactSymbols'
 import { Props, ReactElement } from 'shared/ReactTypes'
@@ -12,7 +12,7 @@ import { ChildDeletion, Placement } from './fiberFlags'
 import { HostText } from './workTags'
 
 /**
- * 协调子fiberNode-current与子ReactElement，返回协调好的fiberNode-workInProgress
+ * !!! 协调子fiberNode-current与子ReactElement，返回协调好的fiberNode-workInProgress
  * @param shouldTrackEffects 是否标记副作用，是则进行falgs的标记，否就不进行falgs的标记
  * @description 当mount时，shouldTrackEffects设置为false可以只对根节点副作用标记
  */
@@ -26,7 +26,8 @@ function ChildReconciler(shouldTrackEffects: boolean) {
     currentFiber: FiberNode | null,
     element: ReactElement
   ) {
-    // ! update
+    // TODO 元素位置移动
+    // ! update，复用fiberNode-current
     const key = element.key
     work: if (currentFiber !== null) {
       if (currentFiber.key === key) {
@@ -48,12 +49,12 @@ function ChildReconciler(shouldTrackEffects: boolean) {
           }
         }
       } else {
-        // 删除旧fiberNode
+        // 删除旧fiberNode，因为key不同
         deleteChild(returnFiber, currentFiber)
       }
     }
 
-    // ! mount
+    // ! mount，创建fiberNode
     // 获取根据ReactElement创建的fiberNode
     const fiber = createFiberFromElement(element)
     // 建立父子关系
@@ -63,7 +64,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
   }
 
   /**
-   * 协调文本节点
+   * !!! 协调文本节点
    * @desciption 根据文本内容创建fiberNode并连接父节点
    */
   function reconcileSingleTextNode(
@@ -104,7 +105,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
 
     if (delections === null) {
       returnFiber.deletions = [childToDelete]
-      returnFiber.flags != ChildDeletion
+      returnFiber.flags |= ChildDeletion
     } else {
       delections.push(childToDelete)
     }
@@ -121,7 +122,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
   }
 
   /**
-   * 插入单一节点
+   * ! mount插入单一节点，仅hostRootFiber追踪副作用，性能优化
    * @desciption 插入节点前进行判断是否追踪副作用
    */
   function placeSingleChild(fiber: FiberNode) {
@@ -133,7 +134,10 @@ function ChildReconciler(shouldTrackEffects: boolean) {
     return fiber
   }
 
-  return function reconcileChildFibers(
+  /**
+   * 协调新ReactElement与旧fiberNode
+   */
+  function reconcileChildFibers(
     returnFiber: FiberNode,
     currentFiber: FiberNode | null,
     newChild?: ReactElement
@@ -174,7 +178,9 @@ function ChildReconciler(shouldTrackEffects: boolean) {
 
     return null
   }
-}
 
+  return reconcileChildFibers
+}
 export const reconcileChildFibers = ChildReconciler(true)
+// ! mount时除hostRootFiber以外的fiberNode都不追踪副作用
 export const mountChildFibers = ChildReconciler(false)
