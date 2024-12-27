@@ -1,0 +1,10 @@
+{
+  "name": "react-reconciler",
+  "version": "0.0.1",
+  "description": "package",
+  "scripts": {},
+  "dependencies": {
+    "react-shared": "workspace:*"
+  },
+  "devDependencies": {}
+}
