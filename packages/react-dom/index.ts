@@ -1,1 +1,1 @@
-export { createRoot } from './src/client/ReactDom'
+export { createRoot, render } from './src/client/ReactDom'

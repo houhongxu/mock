@@ -61,6 +61,7 @@ export function createElement(
     }
   }
 
+  // 赋值children
   const childrenLength = children.length
 
   if (childrenLength) {
