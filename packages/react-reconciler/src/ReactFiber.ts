@@ -5,12 +5,17 @@ import { Key } from 'shared/ReactTypes'
 
 export class FiberNode {
   tag: WorkTag
+  key: Key
+
   stateNode: any
+
   pendingProps: any
+
   mode: TypeOfMode
 
-  constructor(tag: WorkTag, pendingProps: any, mode: TypeOfMode) {
+  constructor(tag: WorkTag, pendingProps: any, key: Key, mode: TypeOfMode) {
     this.tag = tag
+    this.key = key
 
     this.stateNode = null
 
@@ -26,7 +31,7 @@ export function createFiber(
   key: Key,
   mode: TypeOfMode,
 ) {
-  return new FiberNode(tag, pendingProps, mode)
+  return new FiberNode(tag, pendingProps, key, mode)
 }
 
 export function createHostRootFiber(tag: RootTag) {
