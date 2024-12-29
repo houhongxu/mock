@@ -5,7 +5,7 @@
   "scripts": {},
   "dependencies": {
     "react-reconciler": "workspace:*",
-    "react-shared": "workspace:*"
+    "shared": "workspace:*"
   },
   "devDependencies": {}
 }

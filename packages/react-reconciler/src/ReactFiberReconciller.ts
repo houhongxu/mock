@@ -1,5 +1,5 @@
 import { FiberRoot } from './ReactInternalTypes'
-import { ReactNodeList } from 'react-shared/ReactTypes'
+import { ReactNodeList } from 'shared/ReactTypes'
 
 export function createContainer(container: Element | DocumentFragment) {
   return {} as FiberRoot

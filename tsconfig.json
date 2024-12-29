@@ -8,5 +8,6 @@
     "resolveJsonModule": true,
     "moduleResolution": "node",
     "esModuleInterop": true
-  }
+  },
+  "include": ["./packages/**/*", "./scripts/**/*"]
 }

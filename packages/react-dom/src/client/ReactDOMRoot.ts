@@ -3,7 +3,7 @@ import {
   updateContainer,
 } from 'react-reconciler/src/ReactFiberReconciller'
 import { FiberRoot } from 'react-reconciler/src/ReactInternalTypes'
-import { ReactNodeList } from 'react-shared/ReactTypes'
+import { ReactNodeList } from 'shared/ReactTypes'
 
 class ReactDOMRoot {
   private _internalRoot: FiberRoot
