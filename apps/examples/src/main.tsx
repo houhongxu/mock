@@ -1,7 +1,7 @@
 // import App from './App.tsx'
 // import './index.css'
-// import { createRoot } from 'react-dom/client'
 import { createElement } from 'react'
+import { createRoot } from 'react-dom/client'
 
 console.log(createElement)
 console.log(
@@ -11,4 +11,9 @@ console.log(
   </div>,
 )
 
-// createRoot(document.getElementById('root')!).render(<App />)
+createRoot(document.getElementById('root')!).render(
+  <div>
+    hello
+    <span>im react</span>
+  </div>,
+)

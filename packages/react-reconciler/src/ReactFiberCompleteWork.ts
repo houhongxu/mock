@@ -1,5 +1,5 @@
 import { FiberNode } from './ReactFiber'
 
-export function beginWork(unitOfWork: FiberNode) {
+export function completeWork(current: FiberNode | null) {
   return null
 }

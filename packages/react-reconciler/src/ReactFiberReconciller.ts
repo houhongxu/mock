@@ -12,6 +12,7 @@ export function updateContainer(
   container: FiberRootNode,
   callback?: Callback,
 ) {
+  // host root fiber
   const current = container.current
 
   // const lane = requestUpdateLane(current)

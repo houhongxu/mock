@@ -7,10 +7,10 @@ export type Container = Element | DocumentFragment
 export type Callback = null | (() => void)
 
 export interface ReactElement {
-  $$typeof: symbol | number
+  $$typeof?: symbol | number
   type: ElementType
   key: Key
   props: Props
-  ref: Ref
-  _author: string
+  ref?: Ref
+  _author?: string
 }

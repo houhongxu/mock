@@ -48,3 +48,24 @@ export function createHostRootFiber(tag: RootTag) {
 
   return createFiber(HostRoot, null, null, mode)
 }
+
+export function createWorkInProgress(current: FiberNode, pendingProps: any) {
+  let workInProgress = current.alternate
+
+  if (workInProgress === null) {
+    workInProgress = createFiber(
+      current.tag,
+      pendingProps,
+      current.key,
+      current.mode,
+    )
+    workInProgress.stateNode = current.stateNode
+
+    // 双缓存树互相链接
+    workInProgress.alternate = current
+    current.alternate = workInProgress
+  } else {
+  }
+
+  return workInProgress
+}

@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "package",
   "scripts": {},
+  "module": "index.ts",
   "dependencies": {
     "react-reconciler": "workspace:*",
     "shared": "workspace:*"
