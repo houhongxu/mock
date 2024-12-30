@@ -29,5 +29,5 @@ export type WorkTag =
 export const FunctionComponent = 0
 export const ClassComponent = 1
 
-//// host root fiber
+// host root fiber
 export const HostRoot = 3

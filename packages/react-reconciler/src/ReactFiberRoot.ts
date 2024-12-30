@@ -5,24 +5,24 @@ import { Container } from 'shared/ReactTypes'
 export class FiberRootNode {
   containerInfo: Container
   tag: RootTag
-  current: FiberNode | null
+  current: FiberNode
   finishedWork: FiberNode | null
 
-  constructor(containerInfo: Container, tag: RootTag) {
+  constructor(containerInfo: Container, tag: RootTag, current: FiberNode) {
     this.containerInfo = containerInfo
     this.tag = tag
 
-    this.current = null
+    this.current = current
     this.finishedWork = null
   }
 }
 
 export function createFiberRoot(containerInfo: Container, tag: RootTag) {
-  const root = new FiberRootNode(containerInfo, tag)
-
   const uninitializedFiber = createHostRootFiber(tag)
 
-  root.current = uninitializedFiber
+  const root = new FiberRootNode(containerInfo, tag, uninitializedFiber)
+
+  // root.current = uninitializedFiber 因为必然赋值，所以直接通过参数赋值了
 
   uninitializedFiber.stateNode = root
 

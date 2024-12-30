@@ -13,6 +13,8 @@ export class FiberNode {
 
   mode: TypeOfMode
 
+  alternate: FiberNode | null
+
   constructor(tag: WorkTag, pendingProps: any, key: Key, mode: TypeOfMode) {
     this.tag = tag
     this.key = key
@@ -22,6 +24,8 @@ export class FiberNode {
     this.pendingProps = pendingProps
 
     this.mode = mode
+
+    this.alternate = null
   }
 }
 
