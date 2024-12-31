@@ -4,8 +4,8 @@ import { FiberRoot } from './ReactFiberRoot'
 import { ConcurrentRoot, RootTag } from './ReactRootTags'
 import { ConcurrentMode, NoMode, TypeOfMode } from './ReactTypeOfMode'
 import { State, UpdateQueue } from './ReactUpdateQueue'
-import { HostRoot, WorkTag } from './ReactWorkTags'
-import { Key, Type } from 'shared/ReactTypes'
+import { HostRoot, HostText, WorkTag } from './ReactWorkTags'
+import { Key, ReactElement, Type } from 'shared/ReactTypes'
 
 export class Fiber {
   tag: WorkTag
@@ -117,4 +117,23 @@ export function createWorkInProgress(current: Fiber, pendingProps: any) {
   workInProgress.memoizedProps = current.memoizedProps
 
   return workInProgress
+}
+
+export function createFiberFromElement(
+  element: ReactElement,
+  mode: TypeOfMode,
+): Fiber {
+  const type = element.type
+  const key = element.key
+  const pendingProps = element.props
+
+  const fiber = new Fiber(type, pendingProps, key, mode)
+
+  return fiber
+}
+
+export function createFiberFromText(content: string, mode: TypeOfMode) {
+  const fiber = createFiber(HostText, content, null, mode)
+
+  return fiber
 }

@@ -37,3 +37,6 @@ export const HostRoot = 3
 
 // div
 export const HostComponent = 5
+
+// <div>123</div>的123
+export const HostText = 6

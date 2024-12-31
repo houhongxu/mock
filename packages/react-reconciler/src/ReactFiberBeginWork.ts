@@ -1,3 +1,4 @@
+import { mountChildFibers } from './ReactChildFiber'
 import { Fiber } from './ReactFiber'
 import { FiberRoot } from './ReactFiberRoot'
 import { State, processUpdateQueue } from './ReactUpdateQueue'
@@ -7,7 +8,17 @@ export function reconcileChildren(
   current: Fiber | null,
   workInProgress: Fiber,
   nextChildren: any,
-) {}
+) {
+  if (current === null) {
+    workInProgress.child = mountChildFibers(workInProgress, null, nextChildren)!
+  } else {
+    // workInProgress.child = reconcileChildFibers(
+    //   workInProgress,
+    //   current.child,
+    //   nextChildren,
+    // );
+  }
+}
 
 function updateHostRoot(current: Fiber | null, workInProgress: Fiber) {
   if (current === null) {
