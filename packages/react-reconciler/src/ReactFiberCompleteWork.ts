@@ -1,5 +1,5 @@
-import { FiberNode } from './ReactFiber'
+import { Fiber } from './ReactFiber'
 
-export function completeWork(current: FiberNode | null) {
+export function completeWork(current: Fiber | null) {
   return null
 }

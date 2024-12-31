@@ -1,4 +1,4 @@
-import { FiberRootNode, createFiberRoot } from './ReactFiberRoot'
+import { FiberRoot, createFiberRoot } from './ReactFiberRoot'
 import { scheduleUpdateOnFiber } from './ReactFiberWorkLoop'
 import { RootTag } from './ReactRootTags'
 import { createUpdate, enqueueUpdate } from './ReactUpdateQueue'
@@ -12,7 +12,7 @@ export function createContainer(containerInfo: Container, tag: RootTag) {
 
 export function updateContainer(
   element: ReactElement,
-  container: FiberRootNode,
+  container: FiberRoot,
   callback?: Callback,
 ) {
   console.log('[updateContainer]')

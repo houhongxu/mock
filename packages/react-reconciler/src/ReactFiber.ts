@@ -1,23 +1,23 @@
 import { Flags, NoFlags } from './ReactFiberFlags'
 import { Hook } from './ReactFiberHooks'
-import { FiberRootNode } from './ReactFiberRoot'
+import { FiberRoot } from './ReactFiberRoot'
 import { ConcurrentRoot, RootTag } from './ReactRootTags'
 import { ConcurrentMode, NoMode, TypeOfMode } from './ReactTypeOfMode'
 import { State, UpdateQueue } from './ReactUpdateQueue'
 import { HostRoot, WorkTag } from './ReactWorkTags'
 import { Key, Type } from 'shared/ReactTypes'
 
-export class FiberNode {
+export class Fiber {
   tag: WorkTag
   key: Key
   type: Type | null
 
-  return: FiberNode | null
-  sibling: FiberNode | null
-  child: FiberNode | null
+  return: Fiber | null
+  sibling: Fiber | null
+  child: Fiber | null
   index: number
 
-  stateNode: Element | FiberRootNode | null
+  stateNode: Element | FiberRoot | null
 
   pendingProps: any
   memoizedProps: any
@@ -28,9 +28,9 @@ export class FiberNode {
 
   flags: Flags
   subtreeFlags: Flags
-  deletions: FiberNode[] | null
+  deletions: Fiber[] | null
 
-  alternate: FiberNode | null
+  alternate: Fiber | null
 
   constructor(tag: WorkTag, pendingProps: any, key: Key, mode: TypeOfMode) {
     // ! 实例
@@ -80,7 +80,7 @@ export function createFiber(
   key: Key,
   mode: TypeOfMode,
 ) {
-  return new FiberNode(tag, pendingProps, key, mode)
+  return new Fiber(tag, pendingProps, key, mode)
 }
 
 export function createHostRootFiber(tag: RootTag) {
@@ -96,7 +96,7 @@ export function createHostRootFiber(tag: RootTag) {
   return createFiber(HostRoot, null, null, mode)
 }
 
-export function createWorkInProgress(current: FiberNode, pendingProps: any) {
+export function createWorkInProgress(current: Fiber, pendingProps: any) {
   let workInProgress = current.alternate
 
   if (workInProgress === null) {

@@ -2,14 +2,14 @@ import {
   createContainer,
   updateContainer,
 } from 'react-reconciler/src/ReactFiberReconciller'
-import { FiberRootNode } from 'react-reconciler/src/ReactFiberRoot'
+import { FiberRoot } from 'react-reconciler/src/ReactFiberRoot'
 import { ConcurrentRoot } from 'react-reconciler/src/ReactRootTags'
 import { Container, ReactElement } from 'shared/ReactTypes'
 
 class ReactDOMRoot {
-  private _internalRoot: FiberRootNode
+  private _internalRoot: FiberRoot
 
-  constructor(internalRoot: FiberRootNode) {
+  constructor(internalRoot: FiberRoot) {
     this._internalRoot = internalRoot
   }
 

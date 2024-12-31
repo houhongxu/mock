@@ -1,15 +1,15 @@
-import { FiberNode } from './ReactFiber'
-import { FiberRootNode } from './ReactFiberRoot'
+import { Fiber } from './ReactFiber'
+import { FiberRoot } from './ReactFiberRoot'
 import { State, processUpdateQueue } from './ReactUpdateQueue'
 import { HostComponent, HostRoot } from './ReactWorkTags'
 
 export function reconcileChildren(
-  current: FiberNode | null,
-  workInProgress: FiberNode,
+  current: Fiber | null,
+  workInProgress: Fiber,
   nextChildren: any,
 ) {}
 
-function updateHostRoot(current: FiberNode | null, workInProgress: FiberNode) {
+function updateHostRoot(current: Fiber | null, workInProgress: Fiber) {
   if (current === null) {
     console.error('bug')
   }
@@ -22,7 +22,7 @@ function updateHostRoot(current: FiberNode | null, workInProgress: FiberNode) {
   processUpdateQueue(workInProgress, nextProps)
 
   const nextState = workInProgress.memoizedState as State
-  const root = workInProgress.stateNode as FiberRootNode
+  const root = workInProgress.stateNode as FiberRoot
 
   const nextChildren = nextState.element
 
@@ -36,10 +36,7 @@ function updateHostComponent() {
   return null
 }
 
-export function beginWork(
-  current: FiberNode | null,
-  workInProgress: FiberNode,
-) {
+export function beginWork(current: Fiber | null, workInProgress: Fiber) {
   // ! update
   console.log('[beginWork]', current, workInProgress)
 

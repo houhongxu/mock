@@ -2,12 +2,12 @@ import {
   createContainer,
   updateContainer,
 } from 'react-reconciler/src/ReactFiberReconciller'
-import { FiberRootNode } from 'react-reconciler/src/ReactFiberRoot'
+import { FiberRoot } from 'react-reconciler/src/ReactFiberRoot'
 import { LegacyRoot } from 'react-reconciler/src/ReactRootTags'
 import { Callback, Container, ReactElement } from 'shared/ReactTypes'
 
 function legacyCreateRootFromDOMContainer(
-  container: Container & { _reactRootContainer?: FiberRootNode },
+  container: Container & { _reactRootContainer?: FiberRoot },
   initialChildren: ReactElement,
   callback?: Callback,
 ) {
@@ -31,13 +31,13 @@ function legacyCreateRootFromDOMContainer(
 
 function legacyRenderSubtreeIntoContainer(
   children: ReactElement,
-  container: Container & { _reactRootContainer?: FiberRootNode },
+  container: Container & { _reactRootContainer?: FiberRoot },
   callback?: Callback,
 ) {
   // 可能的根节点，防止重复渲染
   const maybeRoot = container._reactRootContainer
 
-  let root: FiberRootNode
+  let root: FiberRoot
 
   if (!maybeRoot) {
     root = legacyCreateRootFromDOMContainer(container, children, callback)
@@ -50,7 +50,7 @@ function legacyRenderSubtreeIntoContainer(
 
 export function render(
   element: ReactElement,
-  container: Container & { _reactRootContainer?: FiberRootNode },
+  container: Container & { _reactRootContainer?: FiberRoot },
   callback?: Callback,
 ) {
   return legacyRenderSubtreeIntoContainer(element, container, callback)

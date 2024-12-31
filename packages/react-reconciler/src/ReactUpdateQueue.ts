@@ -1,4 +1,4 @@
-import { FiberNode } from './ReactFiber'
+import { Fiber } from './ReactFiber'
 
 export type State = {
   element: any
@@ -18,7 +18,7 @@ export type UpdateQueue<State> = {
   shared: SharedQueue<State>
 }
 
-export function initializeUpdateQueue<State>(fiber: FiberNode) {
+export function initializeUpdateQueue<State>(fiber: Fiber) {
   const queue: UpdateQueue<State> = {
     baseState: fiber.memoizedState as State,
     shared: {
@@ -29,10 +29,10 @@ export function initializeUpdateQueue<State>(fiber: FiberNode) {
 
 export function createUpdate() {}
 
-export function enqueueUpdate(fiber: FiberNode, update: Update<State>) {}
+export function enqueueUpdate(fiber: Fiber, update: Update<State>) {}
 
 function getStateFromUpdate(
-  workInProgress: FiberNode,
+  workInProgress: Fiber,
   queue: UpdateQueue<State>,
   prevState: State,
   nextProps: any,
@@ -40,7 +40,7 @@ function getStateFromUpdate(
   return prevState
 }
 
-export function processUpdateQueue(workInProgress: FiberNode, props: any) {
+export function processUpdateQueue(workInProgress: Fiber, props: any) {
   const queue = workInProgress.updateQueue
 
   let pendingQueue = queue?.shared.pending
