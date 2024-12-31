@@ -28,6 +28,8 @@ function markUpdateLaneFromFiberToRoot(fiber: FiberNode) {
 }
 
 function completeUnitOfWork(unitOfWork: FiberNode) {
+  console.log('[completeUnitOfWork]')
+
   let completedWork = unitOfWork
 
   workInProgress = null
@@ -44,10 +46,12 @@ function completeUnitOfWork(unitOfWork: FiberNode) {
 }
 
 function performUnitOfWork(unitOfWork: FiberNode) {
+  console.log('[performUnitOfWork]')
+  const current = unitOfWork.alternate
+
   let next: FiberNode | null
 
-  next = beginWork(unitOfWork)
-  console.log(unitOfWork, next)
+  next = beginWork(current, unitOfWork)
 
   if (next === null) {
     completeUnitOfWork(unitOfWork)
@@ -63,12 +67,16 @@ function prepareFreshStack(root: FiberRootNode) {
 }
 
 function workLoopSync() {
+  console.log('[workLoopSync]')
+
   while (workInProgress !== null) {
     performUnitOfWork(workInProgress)
   }
 }
 
 function renderRootSync(root: FiberRootNode) {
+  console.log('[renderRootSync]')
+
   if (workInProgressRoot !== root) {
     prepareFreshStack(root)
   }
@@ -86,10 +94,12 @@ function renderRootSync(root: FiberRootNode) {
 }
 
 function performSyncWorkOnRoot(root: FiberRootNode) {
+  console.log('[performSyncWorkOnRoot]')
+
   let exitStatus = renderRootSync(root)
 
   if (exitStatus === RootDidNotComplete) {
-    throw Error('这是bug')
+    console.error('bug')
   }
 
   const finishedWork = root.current.alternate
@@ -106,6 +116,8 @@ function performSyncWorkOnRoot(root: FiberRootNode) {
 }
 
 function ensureRootIsScheduled(root: FiberRootNode) {
+  console.log('[ensureRootIsScheduled]')
+
   const newCallbackPriority = SyncLane
 
   if (newCallbackPriority === SyncLane) {
@@ -116,6 +128,8 @@ function ensureRootIsScheduled(root: FiberRootNode) {
 }
 
 export function scheduleUpdateOnFiber(fiber: FiberNode) {
+  console.log('[scheduleUpdateOnFiber]')
+
   // fiber root
   const root = markUpdateLaneFromFiberToRoot(fiber)
 

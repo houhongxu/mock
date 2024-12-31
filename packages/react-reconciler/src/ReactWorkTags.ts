@@ -26,8 +26,14 @@ export type WorkTag =
   | 24
   | 25
 
+// 函数组件
 export const FunctionComponent = 0
+
+// 类组件
 export const ClassComponent = 1
 
 // host root fiber
 export const HostRoot = 3
+
+// div
+export const HostComponent = 5

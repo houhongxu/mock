@@ -18,6 +18,8 @@ export class FiberRootNode {
 }
 
 export function createFiberRoot(containerInfo: Container, tag: RootTag) {
+  console.log('[createFiberRoot]')
+
   const uninitializedFiber = createHostRootFiber(tag)
 
   const root = new FiberRootNode(containerInfo, tag, uninitializedFiber)
