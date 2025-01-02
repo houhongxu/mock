@@ -6,14 +6,12 @@ import { createRoot } from 'react-dom/client'
 console.log(createElement)
 console.log(
   <div>
-    hello
     <span>im react</span>
   </div>,
 )
 
 createRoot(document.getElementById('root')!).render(
   <div>
-    hello
     <span>im react</span>
   </div>,
 )

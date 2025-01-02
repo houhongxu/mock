@@ -32,6 +32,9 @@ export const FunctionComponent = 0
 // 类组件
 export const ClassComponent = 1
 
+// 未知
+export const IndeterminateComponent = 2
+
 // host root fiber
 export const HostRoot = 3
 

@@ -14,6 +14,8 @@ class ReactDOMRoot {
   }
 
   render(children: ReactElement) {
+    console.log('(render)')
+
     const root = this._internalRoot
 
     updateContainer(children, root, null)
@@ -21,6 +23,8 @@ class ReactDOMRoot {
 }
 
 export function createRoot(container: Container) {
+  console.log('(createRoot)')
+
   const root = createContainer(container, ConcurrentRoot)
 
   return new ReactDOMRoot(root)

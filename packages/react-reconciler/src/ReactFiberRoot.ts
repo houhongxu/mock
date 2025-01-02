@@ -1,6 +1,9 @@
 import { Fiber, createHostRootFiber } from './ReactFiber'
 import { RootTag } from './ReactRootTags'
+import { State, initializeUpdateQueue } from './ReactUpdateQueue'
+import { unsubscribe } from 'diagnostics_channel'
 import { Container } from 'shared/ReactTypes'
+import { clone } from 'shared/clone'
 
 export class FiberRoot {
   containerInfo: Container
@@ -18,9 +21,11 @@ export class FiberRoot {
 }
 
 export function createFiberRoot(containerInfo: Container, tag: RootTag) {
-  console.log('[createFiberRoot]')
+  console.log('(createFiberRoot)')
 
   const uninitializedFiber = createHostRootFiber(tag)
+
+  console.log('(createHostRootFiber) return', clone(uninitializedFiber))
 
   const root = new FiberRoot(containerInfo, tag, uninitializedFiber)
 
@@ -28,9 +33,13 @@ export function createFiberRoot(containerInfo: Container, tag: RootTag) {
 
   uninitializedFiber.stateNode = root
 
-  // uninitializedFiber.memoizedState = initialState;
+  const initialState: State = {
+    element: null,
+  }
 
-  // initializeUpdateQueue(uninitializedFiber);
+  uninitializedFiber.memoizedState = initialState
+
+  initializeUpdateQueue(uninitializedFiber)
 
   return root
 }

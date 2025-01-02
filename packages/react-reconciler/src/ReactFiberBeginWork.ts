@@ -1,26 +1,34 @@
-import { mountChildFibers } from './ReactChildFiber'
+import { mountChildFibers, reconcileChildFibers } from './ReactChildFiber'
 import { Fiber } from './ReactFiber'
 import { FiberRoot } from './ReactFiberRoot'
 import { State, processUpdateQueue } from './ReactUpdateQueue'
-import { HostComponent, HostRoot } from './ReactWorkTags'
+import { HostComponent, HostRoot, HostText } from './ReactWorkTags'
+import { clone } from 'shared/clone'
 
 export function reconcileChildren(
   current: Fiber | null,
   workInProgress: Fiber,
   nextChildren: any,
 ) {
+  console.log('(reconcileChildren)', current === null, clone(nextChildren))
+
+  // ! 父 -> 子
   if (current === null) {
     workInProgress.child = mountChildFibers(workInProgress, null, nextChildren)!
   } else {
-    // workInProgress.child = reconcileChildFibers(
-    //   workInProgress,
-    //   current.child,
-    //   nextChildren,
-    // );
+    // ! mount时，host root fiber也走reconcileChildFibers
+
+    workInProgress.child = reconcileChildFibers(
+      workInProgress,
+      current.child,
+      nextChildren,
+    )!
   }
 }
 
 function updateHostRoot(current: Fiber | null, workInProgress: Fiber) {
+  console.log('<updateHostRoot>')
+
   if (current === null) {
     console.error('bug')
   }
@@ -40,17 +48,26 @@ function updateHostRoot(current: Fiber | null, workInProgress: Fiber) {
   // 协调子节点
   reconcileChildren(current, workInProgress, nextChildren)
 
-  return workInProgress
+  console.log('<updateHostRoot> finish', clone(workInProgress))
+
+  return workInProgress.child
 }
 
-function updateHostComponent() {
+function updateHostComponent(current: Fiber | null, workInProgress: Fiber) {
+  console.log('<updateHostComponent>')
+
+  const nextProps = workInProgress.pendingProps
+  const nextChildren = nextProps.children
+
+  reconcileChildren(current, workInProgress, nextChildren)
+
   return null
 }
 
 export function beginWork(current: Fiber | null, workInProgress: Fiber) {
-  // ! update
-  console.log('[beginWork]', current, workInProgress)
+  console.log('(beginWork)', clone(current), clone(workInProgress))
 
+  // ! update
   // bailout 优化
   let didReceiveUpdate = false
 
@@ -72,7 +89,11 @@ export function beginWork(current: Fiber | null, workInProgress: Fiber) {
 
     // 5
     case HostComponent:
-      return updateHostComponent()
+      return updateHostComponent(current, workInProgress)
+
+    // 6
+    case HostText:
+      return null
   }
 
   return null

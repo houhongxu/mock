@@ -1,9 +1,11 @@
 import { Fiber, createWorkInProgress } from './ReactFiber'
 import { beginWork } from './ReactFiberBeginWork'
 import { completeWork } from './ReactFiberCompleteWork'
+import { NoFlags } from './ReactFiberFlags'
 import { SyncLane } from './ReactFiberLane'
 import { FiberRoot } from './ReactFiberRoot'
 import { HostRoot } from './ReactWorkTags'
+import { clone } from 'shared/clone'
 
 type RootExitStatus = 0 | 1 | 2 | 3 | 4 | 5 | 6
 
@@ -23,35 +25,50 @@ let workInProgressRootExitStatus: RootExitStatus = RootInProgress
 
 function markUpdateLaneFromFiberToRoot(fiber: Fiber) {
   if (fiber.tag === HostRoot) {
-    return fiber.stateNode
+    return fiber.stateNode as FiberRoot
   }
 }
 
 function completeUnitOfWork(unitOfWork: Fiber) {
-  console.log('[completeUnitOfWork]')
+  console.log('(completeUnitOfWork)', clone(unitOfWork))
 
-  let completedWork = unitOfWork
-
-  workInProgress = null
+  let completedWork: Fiber | null = unitOfWork
 
   do {
     const current = completedWork.alternate
+    const returnFiber: Fiber | null = completedWork.return
 
-    completeWork(current)
+    let next: Fiber | null
 
-    workInProgress = null
+    next = completeWork(current, completedWork)
 
-    return
+    if (next !== null) {
+      workInProgress = next
+      return
+    }
+
+    const siblingFiber = completedWork.sibling
+
+    if (siblingFiber !== null) {
+      workInProgress = siblingFiber
+      return
+    }
+
+    completedWork = returnFiber
+    workInProgress = completedWork
   } while (completedWork !== null)
 }
 
 function performUnitOfWork(unitOfWork: Fiber) {
-  console.log('[performUnitOfWork]')
+  console.log('------ performUnitOfWork ------')
+
   const current = unitOfWork.alternate
 
   let next: Fiber | null
 
   next = beginWork(current, unitOfWork)
+
+  console.log('(beginWork) return', clone(next))
 
   if (next === null) {
     completeUnitOfWork(unitOfWork)
@@ -61,21 +78,30 @@ function performUnitOfWork(unitOfWork: Fiber) {
 }
 
 function prepareFreshStack(root: FiberRoot) {
+  console.log('(prepareFreshStack)')
   const rootWorkInProgress = createWorkInProgress(root.current, null)
 
+  console.log('(createWorkInProgress) return', clone(rootWorkInProgress))
+
   workInProgress = rootWorkInProgress
+  workInProgressRoot = root
 }
 
 function workLoopSync() {
-  console.log('[workLoopSync]')
+  console.log('(workLoopSync)', clone(workInProgress))
 
   while (workInProgress !== null) {
-    performUnitOfWork(workInProgress)
+    try {
+      performUnitOfWork(workInProgress)
+    } catch (e) {
+      console.error(e)
+      break
+    }
   }
 }
 
 function renderRootSync(root: FiberRoot) {
-  console.log('[renderRootSync]')
+  console.log('(renderRootSync)')
 
   if (workInProgressRoot !== root) {
     prepareFreshStack(root)
@@ -94,7 +120,7 @@ function renderRootSync(root: FiberRoot) {
 }
 
 function performSyncWorkOnRoot(root: FiberRoot) {
-  console.log('[performSyncWorkOnRoot]')
+  console.log('(performSyncWorkOnRoot)')
 
   let exitStatus = renderRootSync(root)
 
@@ -116,7 +142,7 @@ function performSyncWorkOnRoot(root: FiberRoot) {
 }
 
 function ensureRootIsScheduled(root: FiberRoot) {
-  console.log('[ensureRootIsScheduled]')
+  console.log('(ensureRootIsScheduled)', clone(root))
 
   const newCallbackPriority = SyncLane
 
@@ -128,10 +154,10 @@ function ensureRootIsScheduled(root: FiberRoot) {
 }
 
 export function scheduleUpdateOnFiber(fiber: Fiber) {
-  console.log('[scheduleUpdateOnFiber]')
+  console.log('(scheduleUpdateOnFiber)', clone(fiber))
 
   // fiber root
-  const root = markUpdateLaneFromFiberToRoot(fiber)
+  const root = markUpdateLaneFromFiberToRoot(fiber)!
 
   // markRootUpdated(root, lane)
 

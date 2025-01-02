@@ -26,16 +26,20 @@ export type UpdateQueue<State> = {
   shared: SharedQueue<State>
 }
 
-export function initializeUpdateQueue<State>(fiber: Fiber) {
+export function initializeUpdateQueue(fiber: Fiber) {
   const queue: UpdateQueue<State> = {
     baseState: fiber.memoizedState as State,
     shared: {
       pending: null,
     },
   }
+
+  fiber.updateQueue = queue
 }
 
 export function createUpdate() {
+  console.log('(createUpdate)')
+
   const update: Update<any> = {
     tag: UpdateState,
     payload: null,
@@ -45,7 +49,24 @@ export function createUpdate() {
   return update
 }
 
-export function enqueueUpdate(fiber: Fiber, update: Update<State>) {}
+export function enqueueUpdate(fiber: Fiber, update: Update<State>) {
+  console.log('(enqueueUpdate)')
+
+  const updateQueue = fiber.updateQueue
+
+  if (updateQueue === null) return
+
+  const sharedQueue = updateQueue.shared
+
+  const pending = sharedQueue.pending
+
+  if (pending === null) {
+  } else {
+    pending.next = update
+  }
+
+  sharedQueue.pending = update
+}
 
 function getStateFromUpdate(
   workInProgress: Fiber,
@@ -60,18 +81,20 @@ function getStateFromUpdate(
   if (typeof payload === 'function') {
     partialState = payload(prevState, nextProps)
   } else {
-    partialState = prevState
+    partialState = payload
   }
 
   return assign({}, prevState, partialState)
 }
 
 export function processUpdateQueue(workInProgress: Fiber, props: any) {
+  console.log('(processUpdateQueue)')
+
   const queue = workInProgress.updateQueue
 
   if (queue === null) return
 
-  let pendingQueue = queue?.shared.pending
+  let pendingQueue = queue.shared.pending
 
   if (pendingQueue !== null) {
     const update = pendingQueue

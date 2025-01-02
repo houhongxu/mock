@@ -7,6 +7,7 @@ import { Placement } from './ReactFiberFlags'
 import { HostText } from './ReactWorkTags'
 import { REACT_ELEMENT_TYPE } from 'shared/ReactSymbols'
 import { ReactElement } from 'shared/ReactTypes'
+import { clone } from 'shared/clone'
 
 // 协调子节点，参数为是否收集副作用
 function ChildReconciler(shouldTrackSideEffects: boolean) {
@@ -37,6 +38,7 @@ function ChildReconciler(shouldTrackSideEffects: boolean) {
 
     // mount
     const fiber = createFiberFromElement(element, returnFiber.mode)
+    // ! 子 -> 父
     fiber.return = returnFiber
 
     return fiber
@@ -62,6 +64,12 @@ function ChildReconciler(shouldTrackSideEffects: boolean) {
     currentFirstChild: Fiber | null,
     newChild: any,
   ) {
+    console.log(
+      '(reconcileChildFibers)',
+      shouldTrackSideEffects,
+      clone(newChild),
+    )
+
     // ! 单节点
     if (typeof newChild === 'object' && newChild !== null) {
       switch (newChild.$$typeof) {

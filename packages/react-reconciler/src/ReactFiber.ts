@@ -4,7 +4,14 @@ import { FiberRoot } from './ReactFiberRoot'
 import { ConcurrentRoot, RootTag } from './ReactRootTags'
 import { ConcurrentMode, NoMode, TypeOfMode } from './ReactTypeOfMode'
 import { State, UpdateQueue } from './ReactUpdateQueue'
-import { HostRoot, HostText, WorkTag } from './ReactWorkTags'
+import {
+  FunctionComponent,
+  HostComponent,
+  HostRoot,
+  HostText,
+  IndeterminateComponent,
+  WorkTag,
+} from './ReactWorkTags'
 import { Key, ReactElement, Type } from 'shared/ReactTypes'
 
 export class Fiber {
@@ -84,7 +91,7 @@ export function createFiber(
 }
 
 export function createHostRootFiber(tag: RootTag) {
-  console.log('[createHostRootFiber]')
+  console.log('(createHostRootFiber)')
 
   let mode = NoMode
 
@@ -97,6 +104,8 @@ export function createHostRootFiber(tag: RootTag) {
 }
 
 export function createWorkInProgress(current: Fiber, pendingProps: any) {
+  console.log('createWorkInProgress')
+
   let workInProgress = current.alternate
 
   if (workInProgress === null) {
@@ -106,6 +115,7 @@ export function createWorkInProgress(current: Fiber, pendingProps: any) {
       current.key,
       current.mode,
     )
+    workInProgress.type = current.type
     workInProgress.stateNode = current.stateNode
 
     // 双缓存树互相链接
@@ -114,9 +124,30 @@ export function createWorkInProgress(current: Fiber, pendingProps: any) {
   } else {
   }
 
+  workInProgress.child = current.child
   workInProgress.memoizedProps = current.memoizedProps
+  workInProgress.memoizedState = current.memoizedState
+  workInProgress.updateQueue = current.updateQueue
 
   return workInProgress
+}
+
+export function createFiberFromTypeAndProps(
+  type: Type,
+  key: Key,
+  pendingProps: any,
+  mode: TypeOfMode,
+) {
+  let fiberTag: WorkTag = IndeterminateComponent
+
+  if (typeof type === 'function') {
+    fiberTag = FunctionComponent
+  } else if (typeof type === 'string') {
+    // 例如 <div/> 的type是'div'
+    fiberTag = HostComponent
+  }
+
+  return new Fiber(fiberTag, pendingProps, key, mode)
 }
 
 export function createFiberFromElement(
@@ -127,7 +158,7 @@ export function createFiberFromElement(
   const key = element.key
   const pendingProps = element.props
 
-  const fiber = new Fiber(type, pendingProps, key, mode)
+  const fiber = createFiberFromTypeAndProps(type, key, pendingProps, mode)
 
   return fiber
 }
