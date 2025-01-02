@@ -17,6 +17,8 @@ import {
  * @description 根据传入的fiberNode创建子fiberNode，并将这两个fiberNode连接起来
  */
 export function beginWork(wip: FiberNode) {
+  console.log('(beginWork)', wip.alternate, wip)
+
   switch (wip.tag) {
     case HostRoot:
       return updateHostRoot(wip)
@@ -40,8 +42,11 @@ export function beginWork(wip: FiberNode) {
  * 更新HostRoot状态并获取子fiberNode
  */
 function updateHostRoot(wip: FiberNode) {
+  console.log('<updateHostRoot>', wip)
+
   // 获取当前状态
   const baseState = wip.memoizedState
+
   // 获取更新实例队列
   const updateQueue = wip.updateQueue as UpdateQueue<ReactElement>
   // 获取更新实例
@@ -58,6 +63,7 @@ function updateHostRoot(wip: FiberNode) {
 
   // 获取更新后的子fiberNode
   reconcileChildren(wip, nextChildren)
+
   return wip.child
 }
 
@@ -65,6 +71,8 @@ function updateHostRoot(wip: FiberNode) {
  * 获取子fiberNode
  */
 function updateHostComponent(wip: FiberNode) {
+  console.log('<updateHostComponent>')
+
   // 获取子ReactElement
   const nextProps = wip.pendingProps
   const nextChildren = nextProps.children
@@ -88,6 +96,8 @@ function updateFunctionComponent(wip: FiberNode) {
  * !!! 协调子fiberNode-current与子ReactElement，返回协调好的fiberNode-workInProgress
  */
 function reconcileChildren(wip: FiberNode, children?: ReactElement) {
+  console.log('(reconcileChildren)', wip.alternate)
+
   // 获取fiberNode-current
   const current = wip.alternate
 

@@ -15,6 +15,8 @@ let workInProgress: FiberNode | null = null
  * @description 传入的fiber可为任意应用内组件对应的fiber
  */
 export function scheduleUpdateOnFiber(fiber: FiberNode) {
+  console.log('(scheduleUpdateOnFiber)', fiber)
+
   // TODO 调度功能
 
   // 获取fiberRootNode
@@ -49,6 +51,8 @@ function markUpdateFromFiberToRoot(fiber: FiberNode) {
  * 渲染workInProgress树
  */
 function renderRoot(root: FiberRootNode) {
+  console.log('(renderRoot)', root)
+
   // 初始化hostFiberNode-workInProgress
   prepareRefreshStack(root)
 
@@ -87,6 +91,8 @@ function prepareRefreshStack(root: FiberRootNode) {
  * @description 每一次工作循环进行一个fiberNode的处理，会遍历hostFiberNode以及下面所有fiberNode
  */
 function workLoop() {
+  console.log('(workLoop)', workInProgress)
+
   // ! 遍历所有fiberNode
   while (workInProgress !== null) {
     performUnitOfWork(workInProgress)
@@ -97,6 +103,8 @@ function workLoop() {
  * 执行工作单元
  */
 function performUnitOfWork(fiber: FiberNode) {
+  console.log('(performUnitOfWork)')
+
   // 开始[递]工作并获取子fiberNode
   const next = beginWork(fiber)
   // 存储prop为叶子fiberNode的props
@@ -115,6 +123,8 @@ function performUnitOfWork(fiber: FiberNode) {
  * 完成工作单元
  */
 function completeUnitOfWork(fiber: FiberNode) {
+  console.log('(completeUnitOfWork)')
+
   // 获取fiber
   let node: FiberNode | null = fiber
 
@@ -141,6 +151,8 @@ function completeUnitOfWork(fiber: FiberNode) {
  * commit
  */
 function commitRoot(root: FiberRootNode) {
+  console.log('(commitRoot)')
+
   // 获取完整的workInProgress树的hostFiberNode-workInProgress
   const finishedWork = root.finishedWork
 

@@ -135,6 +135,8 @@ export function createWorkInProgress(
   current: FiberNode,
   pendingProps: Props
 ): FiberNode {
+  console.log('(createWorkInProgress)', current)
+
   // 获取workInProgress
   let wip = current.alternate
 

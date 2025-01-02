@@ -21,6 +21,9 @@ export function createContainer(container: Container) {
   const root = new FiberRootNode(container, hostRootFiber)
   // 初始化hostRootFiber的更新实例队列
   hostRootFiber.updateQueue = createUpdateQueue()
+
+  console.log('(createContainer)', root)
+
   return root
 }
 
@@ -32,10 +35,13 @@ export function updateContainer(
   element: ReactElement | null,
   root: FiberRootNode
 ) {
+  console.log('(updateContainer)')
+
   // 获取hostRootFiber-current
   const hostRootFiber = root.current
   // ! 创建react根组件更新实例用来更新react根组件，更新实例可以是ReactElement，因为会根据ReactElement生成fiberNode进行更新
   const update = createUpdate<ReactElement | null>(element)
+
   // 插入到更新实例队列中
   enqueueUpdate(
     hostRootFiber.updateQueue as UpdateQueue<ReactElement | null>,

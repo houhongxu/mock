@@ -142,6 +142,8 @@ function ChildReconciler(shouldTrackEffects: boolean) {
     currentFiber: FiberNode | null,
     newChild?: ReactElement
   ) {
+    console.log('(reconcileChildFibers)', newChild)
+
     // ! 单节点
     if (typeof newChild === 'object' && newChild !== null) {
       switch (newChild.$$typeof) {
