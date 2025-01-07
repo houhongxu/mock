@@ -61,7 +61,7 @@ function updateHostComponent(current: Fiber | null, workInProgress: Fiber) {
 
   reconcileChildren(current, workInProgress, nextChildren)
 
-  return null
+  return workInProgress.child
 }
 
 export function beginWork(current: Fiber | null, workInProgress: Fiber) {

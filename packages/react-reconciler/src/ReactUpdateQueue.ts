@@ -13,7 +13,7 @@ export type State = {
 export type Update<State> = {
   tag: 0 | 1 | 2 | 3
 
-  payload: ((prevState: State | null, nextProps: any) => void) | null
+  payload: ((prevState: State | null, nextProps: any) => void) | null | State
   next: Update<State> | null
 }
 

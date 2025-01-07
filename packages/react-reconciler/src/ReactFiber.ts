@@ -12,7 +12,7 @@ import {
   IndeterminateComponent,
   WorkTag,
 } from './ReactWorkTags'
-import { Key, ReactElement, Type } from 'shared/ReactTypes'
+import { Instance, Key, ReactElement, Type } from 'shared/ReactTypes'
 
 export class Fiber {
   tag: WorkTag
@@ -24,7 +24,7 @@ export class Fiber {
   child: Fiber | null
   index: number
 
-  stateNode: Element | FiberRoot | null
+  stateNode: Instance | FiberRoot | null
 
   pendingProps: any
   memoizedProps: any
@@ -147,7 +147,11 @@ export function createFiberFromTypeAndProps(
     fiberTag = HostComponent
   }
 
-  return new Fiber(fiberTag, pendingProps, key, mode)
+  const fiber = new Fiber(fiberTag, pendingProps, key, mode)
+
+  fiber.type = type
+
+  return fiber
 }
 
 export function createFiberFromElement(

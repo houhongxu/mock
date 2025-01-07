@@ -40,13 +40,18 @@ function completeUnitOfWork(unitOfWork: Fiber) {
 
     let next: Fiber | null
 
+    console.log('------ completeWork ------')
     next = completeWork(current, completedWork)
+
+    console.log('(completeWork) return', clone(next))
+    console.log('-----------------------')
 
     if (next !== null) {
       workInProgress = next
       return
     }
 
+    // 兄
     const siblingFiber = completedWork.sibling
 
     if (siblingFiber !== null) {
@@ -54,21 +59,25 @@ function completeUnitOfWork(unitOfWork: Fiber) {
       return
     }
 
+    // 父
     completedWork = returnFiber
     workInProgress = completedWork
   } while (completedWork !== null)
 }
 
 function performUnitOfWork(unitOfWork: Fiber) {
-  console.log('------ performUnitOfWork ------')
+  console.log('(performUnitOfWork)')
 
   const current = unitOfWork.alternate
 
   let next: Fiber | null
 
+  // 子
+  console.log('------ beginWork ------')
   next = beginWork(current, unitOfWork)
 
   console.log('(beginWork) return', clone(next))
+  console.log('-----------------------')
 
   if (next === null) {
     completeUnitOfWork(unitOfWork)
@@ -98,6 +107,8 @@ function workLoopSync() {
       break
     }
   }
+
+  console.log('(workLoopSync) finish', clone(workInProgress))
 }
 
 function renderRootSync(root: FiberRoot) {

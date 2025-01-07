@@ -7,7 +7,11 @@
     "target": "ESNext",
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": "./packages",
+    "paths": {
+      "HostConfig": ["./react-dom/src/client/ReactDOMHostConfig.ts"]
+    }
   },
   "include": ["./packages/**/*", "./scripts/**/*"]
 }
