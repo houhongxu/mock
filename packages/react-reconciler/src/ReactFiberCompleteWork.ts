@@ -1,16 +1,22 @@
 import { Fiber } from './ReactFiber'
 import { NoFlags } from './ReactFiberFlags'
 import { HostComponent, HostRoot, HostText } from './ReactWorkTags'
-import { appendInitialChild, createInstance } from 'HostConfig'
+import {
+  appendInitialChild,
+  createInstance,
+  createTextInstance,
+} from 'HostConfig'
 import { Instance } from 'shared/ReactTypes'
 import { clone } from 'shared/clone'
 
 function appendAllChildren(parent: Instance, workInProgress: Fiber) {
-  console.log('[appendAllChildren]', parent, clone(workInProgress))
+  console.log('[appendAllChildren]', parent)
 
   let node = workInProgress.child
 
   while (node !== null) {
+    console.log(node)
+
     // 子
     if (node.tag === HostComponent || node.tag === HostText) {
       appendInitialChild(parent, node.stateNode as Instance)
@@ -79,6 +85,22 @@ export function completeWork(current: Fiber | null, workInProgress: Fiber) {
         const instance = createInstance(type, newProps)
 
         appendAllChildren(instance, workInProgress)
+
+        workInProgress.stateNode = instance
+      }
+
+      bubbleProperties(workInProgress)
+
+      return null
+
+    case HostText:
+      const newText = newProps
+
+      if (current && workInProgress.stateNode !== null) {
+        // ! update
+      } else {
+        // ! mount
+        const instance = createTextInstance(newText)
 
         workInProgress.stateNode = instance
       }

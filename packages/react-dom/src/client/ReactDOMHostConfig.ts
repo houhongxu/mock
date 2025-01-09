@@ -1,8 +1,8 @@
 import { updateFiberProps } from './ReactDOMComponentTree'
-import { createElement } from './ReactDomComponent'
-import { Instance, Props } from 'shared/ReactTypes'
+import { createElement, createTextNode } from './ReactDomComponent'
+import { Instance, Props, TextInstance, Type } from 'shared/ReactTypes'
 
-export function createInstance(type: string, props: Props) {
+export function createInstance(type: Type, props: Props) {
   const domElement = createElement(type)
 
   updateFiberProps(domElement, props)
@@ -10,11 +10,30 @@ export function createInstance(type: string, props: Props) {
   return domElement
 }
 
+export function createTextInstance(text: string) {
+  const textNode = createTextNode(text)
+
+  return textNode
+}
+
 export function appendInitialChild(
   parentInstance: Instance,
   child: Instance,
 ): void {
-  console.log(parentInstance, child)
+  parentInstance.appendChild(child)
+}
 
+export function insertBefore(
+  parentInstance: Instance,
+  child: Instance | TextInstance,
+  beforeChild: Instance | TextInstance,
+): void {
+  parentInstance.insertBefore(child, beforeChild)
+}
+
+export function appendChild(
+  parentInstance: Instance,
+  child: Instance | TextInstance,
+): void {
   parentInstance.appendChild(child)
 }

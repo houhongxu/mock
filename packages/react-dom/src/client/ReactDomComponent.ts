@@ -3,3 +3,7 @@ export function createElement(type: string) {
 
   return domElement
 }
+
+export function createTextNode(text: string) {
+  return document.createTextNode(text)
+}

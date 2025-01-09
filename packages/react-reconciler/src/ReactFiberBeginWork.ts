@@ -10,7 +10,7 @@ export function reconcileChildren(
   workInProgress: Fiber,
   nextChildren: any,
 ) {
-  console.log('(reconcileChildren)', current === null, clone(nextChildren))
+  console.log('(reconcileChildren)', clone(nextChildren))
 
   // ! 父 -> 子
   if (current === null) {

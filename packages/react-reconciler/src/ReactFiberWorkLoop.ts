@@ -1,7 +1,8 @@
 import { Fiber, createWorkInProgress } from './ReactFiber'
 import { beginWork } from './ReactFiberBeginWork'
+import { commitMutationEffects } from './ReactFiberCommitWork'
 import { completeWork } from './ReactFiberCompleteWork'
-import { NoFlags } from './ReactFiberFlags'
+import { MutationMask, NoFlags } from './ReactFiberFlags'
 import { SyncLane } from './ReactFiberLane'
 import { FiberRoot } from './ReactFiberRoot'
 import { HostRoot } from './ReactWorkTags'
@@ -30,7 +31,7 @@ function markUpdateLaneFromFiberToRoot(fiber: Fiber) {
 }
 
 function completeUnitOfWork(unitOfWork: Fiber) {
-  console.log('(completeUnitOfWork)', clone(unitOfWork))
+  console.log('(completeUnitOfWork)')
 
   let completedWork: Fiber | null = unitOfWork
 
@@ -44,7 +45,7 @@ function completeUnitOfWork(unitOfWork: Fiber) {
     next = completeWork(current, completedWork)
 
     console.log('(completeWork) return', clone(next))
-    console.log('-----------------------')
+    console.log('--------------------------')
 
     if (next !== null) {
       workInProgress = next
@@ -63,6 +64,10 @@ function completeUnitOfWork(unitOfWork: Fiber) {
     completedWork = returnFiber
     workInProgress = completedWork
   } while (completedWork !== null)
+
+  if (workInProgressRootExitStatus === RootInProgress) {
+    workInProgressRootExitStatus = RootCompleted
+  }
 }
 
 function performUnitOfWork(unitOfWork: Fiber) {
@@ -75,6 +80,8 @@ function performUnitOfWork(unitOfWork: Fiber) {
   // 子
   console.log('------ beginWork ------')
   next = beginWork(current, unitOfWork)
+
+  unitOfWork.memoizedProps = unitOfWork.pendingProps
 
   console.log('(beginWork) return', clone(next))
   console.log('-----------------------')
@@ -103,12 +110,12 @@ function workLoopSync() {
     try {
       performUnitOfWork(workInProgress)
     } catch (e) {
-      console.error(e)
+      console.error('performUnitOfWork', e)
       break
     }
   }
 
-  console.log('(workLoopSync) finish', clone(workInProgress))
+  console.log('(workLoopSync) finish')
 }
 
 function renderRootSync(root: FiberRoot) {
@@ -127,7 +134,53 @@ function renderRootSync(root: FiberRoot) {
     }
   } while (true)
 
+  workInProgressRoot = null
+
   return workInProgressRootExitStatus
+}
+
+function commitRootImpl(root: FiberRoot) {
+  const finishedWork = root.finishedWork
+
+  if (finishedWork === null) {
+    return null
+  }
+
+  root.finishedWork = null
+
+  if (root === workInProgressRoot) {
+    workInProgressRoot = null
+    workInProgress = null
+  }
+
+  const subtreeHasEffects =
+    (finishedWork.subtreeFlags & MutationMask) !== NoFlags
+  const rootHasEffect = (finishedWork.flags & MutationMask) !== NoFlags
+
+  if (subtreeHasEffects || rootHasEffect) {
+    // beforeMutation
+    // commitBeforeMutationEffects()
+
+    // mutation
+    commitMutationEffects(root, finishedWork)
+
+    root.current = finishedWork
+
+    // layout
+    // commitLayoutEffects()
+  } else {
+  }
+}
+
+function commitRoot(root: FiberRoot) {
+  console.log('(commitRoot)')
+
+  try {
+    commitRootImpl(root)
+  } finally {
+  }
+
+  return null
 }
 
 function performSyncWorkOnRoot(root: FiberRoot) {
@@ -143,9 +196,9 @@ function performSyncWorkOnRoot(root: FiberRoot) {
 
   root.finishedWork = finishedWork
 
-  // root.finishedLanes = lanes;
+  console.log('====== finishedWork ======', clone(root))
 
-  // commitRoot(root)
+  commitRoot(root)
 
   // ensureRootIsScheduled(root)
 

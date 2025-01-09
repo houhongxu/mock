@@ -53,6 +53,7 @@ function ChildReconciler(shouldTrackSideEffects: boolean) {
     if (currentFirstChild !== null && currentFirstChild.tag === HostText) {
     }
 
+    // mount
     const created = createFiberFromText(textContent, returnFiber.mode)
     created.return = returnFiber
 
@@ -66,8 +67,7 @@ function ChildReconciler(shouldTrackSideEffects: boolean) {
   ) {
     console.log(
       '(reconcileChildFibers)',
-      shouldTrackSideEffects,
-      clone(newChild),
+      shouldTrackSideEffects ? 'update' : 'mount',
     )
 
     // ! 单节点

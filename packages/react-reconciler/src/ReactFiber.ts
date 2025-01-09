@@ -12,7 +12,13 @@ import {
   IndeterminateComponent,
   WorkTag,
 } from './ReactWorkTags'
-import { Instance, Key, ReactElement, Type } from 'shared/ReactTypes'
+import {
+  Instance,
+  Key,
+  ReactElement,
+  TextInstance,
+  Type,
+} from 'shared/ReactTypes'
 
 export class Fiber {
   tag: WorkTag
@@ -24,7 +30,7 @@ export class Fiber {
   child: Fiber | null
   index: number
 
-  stateNode: Instance | FiberRoot | null
+  stateNode: Instance | TextInstance | FiberRoot | null
 
   pendingProps: any
   memoizedProps: any
@@ -104,7 +110,7 @@ export function createHostRootFiber(tag: RootTag) {
 }
 
 export function createWorkInProgress(current: Fiber, pendingProps: any) {
-  console.log('createWorkInProgress')
+  console.log('(createWorkInProgress)')
 
   let workInProgress = current.alternate
 

@@ -1,7 +1,6 @@
 import { Fiber, createHostRootFiber } from './ReactFiber'
 import { RootTag } from './ReactRootTags'
 import { State, initializeUpdateQueue } from './ReactUpdateQueue'
-import { unsubscribe } from 'diagnostics_channel'
 import { Container } from 'shared/ReactTypes'
 import { clone } from 'shared/clone'
 
