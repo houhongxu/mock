@@ -10,6 +10,7 @@ import {
 } from './fiber'
 import { ChildDeletion, Placement } from './fiberFlags'
 import { HostText } from './workTags'
+import { clone } from './clone'
 
 /**
  * !!! 协调子fiberNode-current与子ReactElement，返回协调好的fiberNode-workInProgress
@@ -57,6 +58,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
     // ! mount，创建fiberNode
     // 获取根据ReactElement创建的fiberNode
     const fiber = createFiberFromElement(element)
+
     // 建立父子关系
     fiber.return = returnFiber
 
@@ -142,7 +144,7 @@ function ChildReconciler(shouldTrackEffects: boolean) {
     currentFiber: FiberNode | null,
     newChild?: ReactElement
   ) {
-    console.log('(reconcileChildFibers)', newChild)
+    console.log('(reconcileChildFibers)', clone(newChild))
 
     // ! 单节点
     if (typeof newChild === 'object' && newChild !== null) {

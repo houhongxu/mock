@@ -11,13 +11,14 @@ import {
   HostText,
   FunctionComponent
 } from './workTags'
+import { clone } from './clone'
 
 /**
  * 开始[递]工作
  * @description 根据传入的fiberNode创建子fiberNode，并将这两个fiberNode连接起来
  */
 export function beginWork(wip: FiberNode) {
-  console.log('(beginWork)', wip.alternate, wip)
+  console.log('(beginWork)', clone(wip.alternate), clone(wip))
 
   switch (wip.tag) {
     case HostRoot:
@@ -42,7 +43,7 @@ export function beginWork(wip: FiberNode) {
  * 更新HostRoot状态并获取子fiberNode
  */
 function updateHostRoot(wip: FiberNode) {
-  console.log('<updateHostRoot>', wip)
+  console.log('<updateHostRoot>', clone(wip))
 
   // 获取当前状态
   const baseState = wip.memoizedState
@@ -96,7 +97,7 @@ function updateFunctionComponent(wip: FiberNode) {
  * !!! 协调子fiberNode-current与子ReactElement，返回协调好的fiberNode-workInProgress
  */
 function reconcileChildren(wip: FiberNode, children?: ReactElement) {
-  console.log('(reconcileChildren)', wip.alternate)
+  console.log('(reconcileChildren)', clone(wip.alternate))
 
   // 获取fiberNode-current
   const current = wip.alternate

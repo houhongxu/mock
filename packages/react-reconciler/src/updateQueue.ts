@@ -55,8 +55,6 @@ export function processUpdateQueue<State>(
   const result: ReturnType<typeof processUpdateQueue<State>> = {
     memoizedState: baseState
   }
-  console.log('!', result, pendingUpdate)
-
   if (pendingUpdate !== null) {
     // 例如
     // baseState:1 update:2 -> memoizedUpdate:2
@@ -72,7 +70,6 @@ export function processUpdateQueue<State>(
       result.memoizedState = action
     }
   }
-  console.log('!', result)
 
   return result
 }

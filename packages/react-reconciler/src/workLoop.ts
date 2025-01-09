@@ -1,6 +1,7 @@
 // 工作循环，workInProgress从hostRootFiber开始
 
 import { beginWork } from './beginWork'
+import { clone } from './clone'
 import { commitMutationEffects } from './commitWork'
 import { completeWork } from './completeWork'
 import { createWorkInProgress, FiberNode, FiberRootNode } from './fiber'
@@ -15,7 +16,7 @@ let workInProgress: FiberNode | null = null
  * @description 传入的fiber可为任意应用内组件对应的fiber
  */
 export function scheduleUpdateOnFiber(fiber: FiberNode) {
-  console.log('(scheduleUpdateOnFiber)', fiber)
+  console.log('(scheduleUpdateOnFiber)', clone(fiber))
 
   // TODO 调度功能
 
@@ -51,7 +52,7 @@ function markUpdateFromFiberToRoot(fiber: FiberNode) {
  * 渲染workInProgress树
  */
 function renderRoot(root: FiberRootNode) {
-  console.log('(renderRoot)', root)
+  console.log('(renderRoot)', clone(root))
 
   // 初始化hostFiberNode-workInProgress
   prepareRefreshStack(root)
@@ -91,7 +92,7 @@ function prepareRefreshStack(root: FiberRootNode) {
  * @description 每一次工作循环进行一个fiberNode的处理，会遍历hostFiberNode以及下面所有fiberNode
  */
 function workLoop() {
-  console.log('(workLoop)', workInProgress)
+  console.log('(workLoop)', clone(workInProgress))
 
   // ! 遍历所有fiberNode
   while (workInProgress !== null) {
@@ -123,8 +124,6 @@ function performUnitOfWork(fiber: FiberNode) {
  * 完成工作单元
  */
 function completeUnitOfWork(fiber: FiberNode) {
-  console.log('(completeUnitOfWork)')
-
   // 获取fiber
   let node: FiberNode | null = fiber
 
@@ -151,7 +150,7 @@ function completeUnitOfWork(fiber: FiberNode) {
  * commit
  */
 function commitRoot(root: FiberRootNode) {
-  console.log('(commitRoot)')
+  console.log('(commitRoot)', clone(root))
 
   // 获取完整的workInProgress树的hostFiberNode-workInProgress
   const finishedWork = root.finishedWork
@@ -163,6 +162,7 @@ function commitRoot(root: FiberRootNode) {
   if (__DEV__) {
     console.warn('commit阶段开始', finishedWork)
   }
+
   // 重置
   root.finishedWork = null
 

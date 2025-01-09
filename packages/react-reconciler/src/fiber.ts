@@ -2,6 +2,7 @@ import { Container } from 'hostConfig'
 import { Key, Props, ReactElement, Ref } from 'shared/ReactTypes'
 import { Flags, NoFlags } from './fiberFlags'
 import { FunctionComponent, HostComponent, WorkTag } from './workTags'
+import { clone } from './clone'
 
 export class FiberNode {
   ref: Ref
@@ -135,7 +136,7 @@ export function createWorkInProgress(
   current: FiberNode,
   pendingProps: Props
 ): FiberNode {
-  console.log('(createWorkInProgress)', current)
+  console.log('(createWorkInProgress)', clone(current))
 
   // 获取workInProgress
   let wip = current.alternate

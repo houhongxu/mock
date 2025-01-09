@@ -14,12 +14,15 @@ import {
   HostRoot,
   HostText
 } from './workTags'
+import { clone } from './clone'
 
 /**
  * !!! 完成[归]工作
  * @description 从最深层开始，一层层创建离屏DOM树
  */
 export function completeWork(wip: FiberNode) {
+  console.log('(completeWork)', clone(wip))
+
   // 获取更新后的属性
   const newProps = wip.pendingProps
   // 获取fiberNode-current
@@ -59,6 +62,7 @@ export function completeWork(wip: FiberNode) {
         // ! mount
         // 创建DOM-workInProgress
         const instance = createTextInstance(newProps.content)
+
         // 文本节点没有子节点
         wip.stateNode = instance
       }
@@ -91,6 +95,8 @@ export function completeWork(wip: FiberNode) {
  * @description 在DOM-workInProgress对应的离屏DOM下，插入fiberNode-workInProgress以及其所有的子对应的离屏DOM，因为completeWork是从最深层开始，所以倒数第一层执行此函数将无操作，倒数第二层以后则会有未知数量的子离屏DOM挂载，所以仅挂载子离屏DOM就可以生成完整的离屏DOM树
  */
 function appendAllChildren(parent: any, wip: FiberNode) {
+  console.log('[appendAllChildren]', clone(parent), clone(wip))
+
   // 获取子fiberNode
   let node = wip.child
 

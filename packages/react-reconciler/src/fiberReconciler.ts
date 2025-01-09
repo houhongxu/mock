@@ -9,6 +9,7 @@ import {
 } from './updateQueue'
 import { scheduleUpdateOnFiber } from './workLoop'
 import { HostRoot } from './workTags'
+import { clone } from './clone'
 
 /**
  * 创建fiberRootNode与hostRootFiber-current
@@ -22,7 +23,7 @@ export function createContainer(container: Container) {
   // 初始化hostRootFiber的更新实例队列
   hostRootFiber.updateQueue = createUpdateQueue()
 
-  console.log('(createContainer)', root)
+  console.log('(createContainer)', clone(root))
 
   return root
 }

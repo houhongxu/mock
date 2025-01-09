@@ -32,6 +32,8 @@ export function appendInitialChild(
   parent: Instance | Container,
   child: Instance
 ) {
+  console.log(parent, child)
+
   parent.appendChild(child)
 }
 
