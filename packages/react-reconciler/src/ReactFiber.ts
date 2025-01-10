@@ -49,6 +49,7 @@ export class Fiber {
     // ! 实例
     this.tag = tag
     this.key = key
+    // div span p / f App() / class App
     this.type = null
 
     // ! 树
@@ -62,6 +63,7 @@ export class Fiber {
     this.index = 0
 
     // ! dom
+    // fiber root / dom
     this.stateNode = null
 
     // ! 工作单元
@@ -73,6 +75,7 @@ export class Fiber {
     this.memoizedState = null
     // 更新链表
     this.updateQueue = null
+
     // ! 模式
     // 模式，区分render和createRoot入口
     this.mode = mode

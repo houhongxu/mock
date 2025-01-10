@@ -81,6 +81,7 @@ function performUnitOfWork(unitOfWork: Fiber) {
   console.log('------ beginWork ------')
   next = beginWork(current, unitOfWork)
 
+  // old props = new props
   unitOfWork.memoizedProps = unitOfWork.pendingProps
 
   console.log('(beginWork) return', clone(next))

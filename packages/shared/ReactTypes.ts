@@ -15,4 +15,5 @@ export interface ReactElement {
   props: Props
   ref?: Ref
   _author?: string
+  _fucntion?: string
 }

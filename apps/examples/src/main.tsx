@@ -1,17 +1,19 @@
 // import App from './App.tsx'
 // import './index.css'
-import { createElement } from 'react'
 import { createRoot } from 'react-dom/client'
 
-console.log(createElement)
-console.log(
+function Button() {
+  return <div>button</div>
+}
+
+const App = (
   <div>
-    <span>im react</span>
-  </div>,
+    <span>
+      <Button></Button>
+    </span>
+  </div>
 )
 
-createRoot(document.getElementById('root')!).render(
-  <div>
-    <span>im react</span>
-  </div>,
-)
+console.log(App)
+
+createRoot(document.getElementById('root')!).render(App)

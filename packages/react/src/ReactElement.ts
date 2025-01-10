@@ -1,5 +1,12 @@
 import { REACT_ELEMENT_TYPE } from 'shared/ReactSymbols'
-import { ElementType, Key, Props, Ref, Type } from 'shared/ReactTypes'
+import {
+  ReactElement as ReactElementType,
+  ElementType,
+  Key,
+  Props,
+  Ref,
+  Type,
+} from 'shared/ReactTypes'
 import hasOwnProperty from 'shared/hasOwnProperty'
 
 const RESERVED_PROPS = {
@@ -20,7 +27,7 @@ function ReactElement(
   key: Key,
   ref: Ref,
   props: Props,
-): ElementType {
+): ReactElementType {
   return {
     $$typeof: REACT_ELEMENT_TYPE,
     type,
@@ -28,6 +35,7 @@ function ReactElement(
     ref,
     props,
     _author: 'HHX',
+    _fucntion: 'createElement',
   }
 }
 

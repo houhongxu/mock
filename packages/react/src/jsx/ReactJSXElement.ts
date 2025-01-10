@@ -35,6 +35,7 @@ function ReactElement(
     ref,
     props,
     _author: 'HHX',
+    _fucntion: 'jsxDev',
   }
 }
 
