@@ -15,6 +15,7 @@ import {
 import {
   Instance,
   Key,
+  Props,
   ReactElement,
   TextInstance,
   Type,
@@ -32,8 +33,8 @@ export class Fiber {
 
   stateNode: Instance | TextInstance | FiberRoot | null
 
-  pendingProps: any
-  memoizedProps: any
+  pendingProps: Props
+  memoizedProps: Props
   memoizedState: Hook | State | null
   updateQueue: UpdateQueue<State> | null
 
@@ -45,7 +46,7 @@ export class Fiber {
 
   alternate: Fiber | null
 
-  constructor(tag: WorkTag, pendingProps: any, key: Key, mode: TypeOfMode) {
+  constructor(tag: WorkTag, pendingProps: Props, key: Key, mode: TypeOfMode) {
     // ! 实例
     this.tag = tag
     this.key = key
@@ -92,7 +93,7 @@ export class Fiber {
 
 export function createFiber(
   tag: WorkTag,
-  pendingProps: any,
+  pendingProps: Props,
   key: Key,
   mode: TypeOfMode,
 ) {
@@ -112,7 +113,7 @@ export function createHostRootFiber(tag: RootTag) {
   return createFiber(HostRoot, null, null, mode)
 }
 
-export function createWorkInProgress(current: Fiber, pendingProps: any) {
+export function createWorkInProgress(current: Fiber, pendingProps: Props) {
   console.log('(createWorkInProgress)')
 
   let workInProgress = current.alternate
@@ -144,7 +145,7 @@ export function createWorkInProgress(current: Fiber, pendingProps: any) {
 export function createFiberFromTypeAndProps(
   type: Type,
   key: Key,
-  pendingProps: any,
+  pendingProps: Props,
   mode: TypeOfMode,
 ) {
   let fiberTag: WorkTag = IndeterminateComponent

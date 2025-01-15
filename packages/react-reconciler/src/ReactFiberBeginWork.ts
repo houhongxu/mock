@@ -1,8 +1,15 @@
 import { mountChildFibers, reconcileChildFibers } from './ReactChildFiber'
 import { Fiber } from './ReactFiber'
+import { renderWithHooks } from './ReactFiberHooks'
 import { FiberRoot } from './ReactFiberRoot'
 import { State, processUpdateQueue } from './ReactUpdateQueue'
-import { HostComponent, HostRoot, HostText } from './ReactWorkTags'
+import {
+  FunctionComponent,
+  HostComponent,
+  HostRoot,
+  HostText,
+} from './ReactWorkTags'
+import { Props } from 'shared/ReactTypes'
 import { clone } from 'shared/clone'
 
 export function reconcileChildren(
@@ -64,6 +71,23 @@ function updateHostComponent(current: Fiber | null, workInProgress: Fiber) {
   return workInProgress.child
 }
 
+function updateFuntionComponent(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  Component: any,
+  nextProps: Props,
+) {
+  console.log('<updateFuntionComponent>')
+
+  let nextChildren
+
+  nextChildren = renderWithHooks(current, workInProgress, Component, nextProps)
+
+  reconcileChildren(current, workInProgress, nextChildren)
+
+  return workInProgress.child
+}
+
 export function beginWork(current: Fiber | null, workInProgress: Fiber) {
   console.log('(beginWork)', clone(current), clone(workInProgress))
 
@@ -94,6 +118,18 @@ export function beginWork(current: Fiber | null, workInProgress: Fiber) {
     // 6
     case HostText:
       return null
+
+    case FunctionComponent:
+      const Component = workInProgress.type
+      const unresolvedProps = workInProgress.pendingProps
+      const resolvedProps = unresolvedProps
+
+      return updateFuntionComponent(
+        current,
+        workInProgress,
+        Component,
+        resolvedProps,
+      )
   }
 
   return null
