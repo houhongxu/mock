@@ -1,8 +1,9 @@
 import { Fiber } from './ReactFiber'
 import { scheduleUpdateOnFiber } from './ReactFiberWorkLoop'
-import { Action, Dispatch, Dispatcher } from './ReactInternalTypes'
+import { BasicStateAction, Dispatch, Dispatcher } from './ReactInternalTypes'
 import ReactSharedInternals from 'shared/ReactSharedInternals'
 import { Props } from 'shared/ReactTypes'
+import { clone } from 'shared/clone'
 
 type Update<S, A> = {
   action: A
@@ -31,6 +32,8 @@ let currentHook: Hook | null = null
 let workInProgressHook: Hook | null = null
 
 function mountWorkInProgressHook(): Hook {
+  console.log('-mountWorkInProgressHook-')
+
   const hook: Hook = {
     memoizedState: null,
 
@@ -42,8 +45,12 @@ function mountWorkInProgressHook(): Hook {
   }
 
   if (workInProgressHook === null) {
+    if (currentlyRenderingFiber === null) {
+      throw Error('mountWorkInProgressHook')
+    }
+
     // 当前hook初始化为链表头
-    currentlyRenderingFiber!.memoizedState = workInProgressHook = hook
+    currentlyRenderingFiber.memoizedState = workInProgressHook = hook
   } else {
     // 当前hook插入链表尾
     workInProgressHook = workInProgressHook.next = hook
@@ -53,6 +60,8 @@ function mountWorkInProgressHook(): Hook {
 }
 
 function enqueueUpdate<S, A>(queue: UpdateQueue<S, A>, update: Update<S, A>) {
+  console.log('-enqueueUpdate-', clone(update))
+
   const pending = queue.pending
 
   if (pending === null) {
@@ -70,6 +79,8 @@ function dispatchSetState<S, A>(
   queue: UpdateQueue<S, A>,
   action: A,
 ) {
+  console.log('-dispatchSetState-', clone(fiber))
+
   const update: Update<S, A> = {
     action,
     next: null,
@@ -81,7 +92,11 @@ function dispatchSetState<S, A>(
 }
 
 function mountState<S>(initialState: (() => S) | S): [S, Dispatch<S>] {
+  console.log('-mountState-', clone(initialState))
+
   const hook = mountWorkInProgressHook()
+
+  console.log('-mountWorkInProgressHook- return', clone(hook))
 
   if (typeof initialState === 'function') {
     initialState = (initialState as () => S)()
@@ -89,16 +104,20 @@ function mountState<S>(initialState: (() => S) | S): [S, Dispatch<S>] {
 
   hook.memoizedState = hook.baseState = initialState
 
-  const queue: UpdateQueue<S, Action<S>> = {
+  const queue: UpdateQueue<S, BasicStateAction<S>> = {
     pending: null,
     dispatch: null,
   }
 
   hook.queue = queue
 
+  if (currentlyRenderingFiber === null) {
+    throw Error('mountWorkInProgressHook')
+  }
+
   const dispatch = (queue.dispatch = dispatchSetState.bind(
     null,
-    currentlyRenderingFiber!,
+    currentlyRenderingFiber,
     queue,
   ))
 
@@ -123,7 +142,9 @@ export function renderWithHooks(
   Component: (p: Props) => any,
   props: Props,
 ) {
-  let currentlyRenderingFiber: Fiber | null = workInProgress
+  console.log('-renderWithHooks-', clone(workInProgress))
+
+  currentlyRenderingFiber = workInProgress
 
   workInProgress.memoizedState = null
   workInProgress.updateQueue = null
@@ -133,7 +154,7 @@ export function renderWithHooks(
       ? HooksDispatcherOnMount
       : HooksDispatcherOnUpdate
 
-  // ! 执行Component触发ReactCurrentDispatcher.current
+  // ! 执行Component调用hooks,即调用ReactCurrentDispatcher.current
   let children = Component(props)
 
   currentlyRenderingFiber = null

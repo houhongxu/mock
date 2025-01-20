@@ -2,8 +2,10 @@ import { mountChildFibers, reconcileChildFibers } from './ReactChildFiber'
 import { Fiber } from './ReactFiber'
 import { renderWithHooks } from './ReactFiberHooks'
 import { FiberRoot } from './ReactFiberRoot'
-import { State, processUpdateQueue } from './ReactUpdateQueue'
+import { ComponentState } from './ReactInternalTypes'
+import { processUpdateQueue } from './ReactUpdateQueue'
 import {
+  Fragment,
   FunctionComponent,
   HostComponent,
   HostRoot,
@@ -37,17 +39,17 @@ function updateHostRoot(current: Fiber | null, workInProgress: Fiber) {
   console.log('<updateHostRoot>')
 
   if (current === null) {
-    console.error('bug')
+    throw Error('updateHostRoot')
   }
 
-  const nextProps = workInProgress.pendingProps
-  const prevState = workInProgress.memoizedState as State
+  const nextProps = workInProgress.pendingProps as ComponentState
+  const prevState = workInProgress.memoizedState as ComponentState
   const prevChildren = prevState.element
 
   // update state
-  processUpdateQueue(workInProgress, nextProps)
+  processUpdateQueue<ComponentState>(workInProgress, nextProps)
 
-  const nextState = workInProgress.memoizedState as State
+  const nextState = workInProgress.memoizedState as ComponentState
   const root = workInProgress.stateNode as FiberRoot
 
   const nextChildren = nextState.element
@@ -88,10 +90,19 @@ function updateFuntionComponent(
   return workInProgress.child
 }
 
+function updateFragment(current: Fiber | null, workInProgress: Fiber) {
+  const nextChildren = workInProgress.pendingProps
+
+  reconcileChildren(current, workInProgress, nextChildren)
+
+  return workInProgress.child
+}
+
 export function beginWork(current: Fiber | null, workInProgress: Fiber) {
   console.log('(beginWork)', clone(current), clone(workInProgress))
 
   // ! update
+
   // bailout 优化
   let didReceiveUpdate = false
 
@@ -119,6 +130,7 @@ export function beginWork(current: Fiber | null, workInProgress: Fiber) {
     case HostText:
       return null
 
+    // 0
     case FunctionComponent:
       const Component = workInProgress.type
       const unresolvedProps = workInProgress.pendingProps
@@ -130,6 +142,10 @@ export function beginWork(current: Fiber | null, workInProgress: Fiber) {
         Component,
         resolvedProps,
       )
+
+    // 7
+    case Fragment:
+      return updateFragment(current, workInProgress)
   }
 
   return null

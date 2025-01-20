@@ -1,7 +1,13 @@
-export type Action<State> = State | ((prevState: State) => State)
+import { ReactElement } from 'shared/ReactTypes'
 
-export type Dispatch<State> = (action: Action<State>) => void
+export type ComponentState = {
+  element: ReactElement | null
+}
+
+export type BasicStateAction<State> = State | ((prevState: State) => State)
+
+export type Dispatch<State> = (action: BasicStateAction<State>) => void
 
 export interface Dispatcher {
-  useState: <S>(initialState: () => S | S) => [S, Dispatch<S>]
+  useState: <S>(initialState: (() => S) | S) => [S, Dispatch<S>]
 }

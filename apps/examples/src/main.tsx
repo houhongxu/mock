@@ -1,9 +1,22 @@
 // import App from './App.tsx'
 // import './index.css'
+import { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 
+let timer: number
+
 function Button() {
-  return <div>button</div>
+  const [count, setCount] = useState(10086)
+
+  if (!timer) {
+    timer = window.setTimeout(() => {
+      console.log('====================更新====================')
+
+      setCount((pre) => pre + 1)
+    }, 1000)
+  }
+
+  return <div>{count}</div>
 }
 
 const App = (

@@ -43,3 +43,6 @@ export const HostComponent = 5
 
 // <div>123</div>的123
 export const HostText = 6
+
+// <></>
+export const Fragment = 7

@@ -6,10 +6,6 @@ export const ReplaceState = 1
 export const ForceUpdate = 2
 export const CaptureUpdate = 3
 
-export type State = {
-  element: any
-}
-
 export type Update<State> = {
   tag: 0 | 1 | 2 | 3
 
@@ -28,7 +24,7 @@ export type UpdateQueue<State> = {
   shared: SharedQueue<State>
 }
 
-export function initializeUpdateQueue(fiber: Fiber) {
+export function initializeUpdateQueue<State>(fiber: Fiber) {
   const queue: UpdateQueue<State> = {
     baseState: fiber.memoizedState as State | null,
     firstBaseUpdate: null, // 链表头
@@ -53,7 +49,7 @@ export function createUpdate() {
   return update
 }
 
-export function enqueueUpdate(fiber: Fiber, update: Update<State>) {
+export function enqueueUpdate<State>(fiber: Fiber, update: Update<State>) {
   console.log('(enqueueUpdate)')
 
   const updateQueue = fiber.updateQueue
@@ -78,7 +74,7 @@ export function enqueueUpdate(fiber: Fiber, update: Update<State>) {
   sharedQueue.pending = update
 }
 
-function getStateFromUpdate(
+function getStateFromUpdate<State>(
   workInProgress: Fiber,
   queue: UpdateQueue<State>,
   update: Update<State>,
@@ -89,7 +85,9 @@ function getStateFromUpdate(
   let partialState
 
   if (typeof payload === 'function') {
-    partialState = payload(prevState, nextProps)
+    partialState = (
+      payload as (prevState: State | null, nextProps: any) => void
+    )(prevState, nextProps)
   } else {
     partialState = payload
   }
@@ -97,10 +95,10 @@ function getStateFromUpdate(
   return assign({}, prevState, partialState)
 }
 
-export function processUpdateQueue(workInProgress: Fiber, props: any) {
+export function processUpdateQueue<State>(workInProgress: Fiber, props: any) {
   console.log('(processUpdateQueue)')
 
-  const queue = workInProgress.updateQueue
+  const queue: UpdateQueue<State> | null = workInProgress.updateQueue
 
   if (queue === null) return
 

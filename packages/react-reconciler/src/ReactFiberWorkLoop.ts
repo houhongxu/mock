@@ -28,6 +28,8 @@ function markUpdateLaneFromFiberToRoot(fiber: Fiber) {
   if (fiber.tag === HostRoot) {
     return fiber.stateNode as FiberRoot
   }
+
+  return null
 }
 
 function completeUnitOfWork(unitOfWork: Fiber) {
@@ -71,7 +73,7 @@ function completeUnitOfWork(unitOfWork: Fiber) {
 }
 
 function performUnitOfWork(unitOfWork: Fiber) {
-  console.log('(performUnitOfWork)')
+  console.log('(performUnitOfWork)', clone(unitOfWork))
 
   const current = unitOfWork.alternate
 
@@ -190,7 +192,7 @@ function performSyncWorkOnRoot(root: FiberRoot) {
   let exitStatus = renderRootSync(root)
 
   if (exitStatus === RootDidNotComplete) {
-    console.error('bug')
+    throw Error('performSyncWorkOnRoot')
   }
 
   const finishedWork = root.current.alternate
@@ -222,8 +224,10 @@ export function scheduleUpdateOnFiber(fiber: Fiber) {
   console.log('(scheduleUpdateOnFiber)', clone(fiber))
 
   // fiber root
-  const root = markUpdateLaneFromFiberToRoot(fiber)!
+  const root = markUpdateLaneFromFiberToRoot(fiber)
 
+  if (root === null) {
+    
   // markRootUpdated(root, lane)
 
   ensureRootIsScheduled(root)

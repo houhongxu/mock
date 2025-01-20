@@ -1,13 +1,17 @@
+import ReactSharedInternals from '../ReactSharedInternals'
 import { REACT_ELEMENT_TYPE } from 'shared/ReactSymbols'
 import {
   ElementType,
   Key,
+  Owner,
   Props,
   ReactElement as ReactElementType,
   Ref,
   Type,
 } from 'shared/ReactTypes'
 import hasOwnProperty from 'shared/hasOwnProperty'
+
+const ReactCurrentOwner = ReactSharedInternals.ReactCurrentOwner
 
 const RESERVED_PROPS = {
   key: true,
@@ -27,6 +31,7 @@ function ReactElement(
   key: Key,
   ref: Ref,
   props: Props,
+  owner: Owner,
 ): ReactElementType {
   return {
     $$typeof: REACT_ELEMENT_TYPE,
@@ -34,6 +39,8 @@ function ReactElement(
     key,
     ref,
     props,
+    _owner: owner,
+
     _author: 'HHX',
     _fucntion: 'jsxDev',
   }
@@ -84,5 +91,5 @@ export function jsxDEV(type: ElementType, config: any, maybeKey: any) {
     }
   }
 
-  return ReactElement(type, key, ref, props)
+  return ReactElement(type, key, ref, props, ReactCurrentOwner.current)
 }

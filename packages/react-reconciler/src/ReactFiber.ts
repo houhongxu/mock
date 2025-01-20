@@ -1,10 +1,12 @@
 import { Flags, NoFlags } from './ReactFiberFlags'
 import { Hook } from './ReactFiberHooks'
 import { FiberRoot } from './ReactFiberRoot'
+import { ComponentState } from './ReactInternalTypes'
 import { ConcurrentRoot, RootTag } from './ReactRootTags'
 import { ConcurrentMode, NoMode, TypeOfMode } from './ReactTypeOfMode'
-import { State, UpdateQueue } from './ReactUpdateQueue'
+import { UpdateQueue } from './ReactUpdateQueue'
 import {
+  Fragment,
   FunctionComponent,
   HostComponent,
   HostRoot,
@@ -12,11 +14,15 @@ import {
   IndeterminateComponent,
   WorkTag,
 } from './ReactWorkTags'
+import { REACT_FRAGMENT_TYPE } from 'shared/ReactSymbols'
 import {
   Instance,
   Key,
+  Owner,
   Props,
   ReactElement,
+  ReactFragment,
+  Ref,
   TextInstance,
   Type,
 } from 'shared/ReactTypes'
@@ -24,6 +30,7 @@ import {
 export class Fiber {
   tag: WorkTag
   key: Key
+  elementType: Type | null
   type: Type | null
 
   return: Fiber | null
@@ -32,11 +39,12 @@ export class Fiber {
   index: number
 
   stateNode: Instance | TextInstance | FiberRoot | null
+  ref: Ref
 
   pendingProps: Props
   memoizedProps: Props
-  memoizedState: Hook | State | null
-  updateQueue: UpdateQueue<State> | null
+  memoizedState: any
+  updateQueue: UpdateQueue<any> | null
 
   mode: TypeOfMode
 
@@ -50,6 +58,8 @@ export class Fiber {
     // ! 实例
     this.tag = tag
     this.key = key
+    // memo forwardRef等，elementType是原始组件，type是高级组件
+    this.elementType = null
     // div span p / f App() / class App
     this.type = null
 
@@ -66,6 +76,7 @@ export class Fiber {
     // ! dom
     // fiber root / dom
     this.stateNode = null
+    this.ref = null
 
     // ! 工作单元
     // new props
@@ -125,6 +136,8 @@ export function createWorkInProgress(current: Fiber, pendingProps: Props) {
       current.key,
       current.mode,
     )
+
+    workInProgress.elementType = current.elementType
     workInProgress.type = current.type
     workInProgress.stateNode = current.stateNode
 
@@ -132,12 +145,23 @@ export function createWorkInProgress(current: Fiber, pendingProps: Props) {
     workInProgress.alternate = current
     current.alternate = workInProgress
   } else {
+    workInProgress.pendingProps = pendingProps
+    workInProgress.type = current.type
+
+    workInProgress.flags = NoFlags
+    workInProgress.subtreeFlags = NoFlags
+    workInProgress.deletions = null
   }
 
+  workInProgress.flags = current.flags
   workInProgress.child = current.child
   workInProgress.memoizedProps = current.memoizedProps
   workInProgress.memoizedState = current.memoizedState
   workInProgress.updateQueue = current.updateQueue
+
+  workInProgress.sibling = current.sibling
+  workInProgress.index = current.index
+  workInProgress.ref = current.ref
 
   return workInProgress
 }
@@ -149,17 +173,24 @@ export function createFiberFromTypeAndProps(
   mode: TypeOfMode,
 ) {
   let fiberTag: WorkTag = IndeterminateComponent
+  let resolvedType = type
 
   if (typeof type === 'function') {
-    fiberTag = FunctionComponent
+    fiberTag = FunctionComponent // ClassComponent
   } else if (typeof type === 'string') {
     // 例如 <div/> 的type是'div'
     fiberTag = HostComponent
+  } else {
+    switch (type) {
+      case REACT_FRAGMENT_TYPE:
+        return createFiberFromFragment(pendingProps.children, mode, key)
+    }
   }
 
-  const fiber = new Fiber(fiberTag, pendingProps, key, mode)
+  const fiber = createFiber(fiberTag, pendingProps, key, mode)
 
-  fiber.type = type
+  fiber.elementType = type
+  fiber.type = resolvedType
 
   return fiber
 }
@@ -179,6 +210,16 @@ export function createFiberFromElement(
 
 export function createFiberFromText(content: string, mode: TypeOfMode) {
   const fiber = createFiber(HostText, content, null, mode)
+
+  return fiber
+}
+
+export function createFiberFromFragment(
+  elements: ReactFragment,
+  mode: TypeOfMode,
+  key: null | string,
+): Fiber {
+  const fiber = createFiber(Fragment, elements, key, mode)
 
   return fiber
 }
