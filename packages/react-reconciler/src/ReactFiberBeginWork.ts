@@ -1,15 +1,21 @@
 import { mountChildFibers, reconcileChildFibers } from './ReactChildFiber'
 import { Fiber } from './ReactFiber'
+import { Placement } from './ReactFiberFlags'
 import { renderWithHooks } from './ReactFiberHooks'
 import { FiberRoot } from './ReactFiberRoot'
-import { State, processUpdateQueue } from './ReactUpdateQueue'
+import { ComponentState } from './ReactInternalTypes'
+import { initializeUpdateQueue, processUpdateQueue } from './ReactUpdateQueue'
 import {
+  ClassComponent,
+  Fragment,
   FunctionComponent,
   HostComponent,
   HostRoot,
   HostText,
+  IndeterminateComponent,
 } from './ReactWorkTags'
-import { Props } from 'shared/ReactTypes'
+import ReactCurrentOwner from 'react/src/ReactCurrentOwner'
+import { Props, Type } from 'shared/ReactTypes'
 import { clone } from 'shared/clone'
 
 export function reconcileChildren(
@@ -33,21 +39,81 @@ export function reconcileChildren(
   }
 }
 
+function finishClassComponent(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  Component: any,
+  shouldUpdate: boolean,
+) {
+  // ! ref只有ClassComponent赋值
+  ReactCurrentOwner.current = workInProgress
+
+  return workInProgress.child
+}
+
+function mountIndeterminateComponent(
+  _current: Fiber | null,
+  workInProgress: Fiber,
+  Component: Type,
+) {
+  console.log('<mountIndeterminateComponent>')
+
+  if (_current !== null) {
+    _current.alternate = null
+
+    workInProgress.alternate = null
+
+    workInProgress.flags |= Placement
+  }
+
+  const props = workInProgress.pendingProps
+  let value
+
+  value = renderWithHooks(null, workInProgress, Component, props)
+
+  if (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof value.render === 'function' &&
+    value.$$typeof === undefined
+  ) {
+    workInProgress.tag = ClassComponent
+
+    workInProgress.memoizedState = null
+    workInProgress.updateQueue = null
+
+    workInProgress.memoizedState =
+      value.state !== null && value.state !== undefined ? value.state : null
+
+    initializeUpdateQueue(workInProgress)
+
+    return finishClassComponent(null, workInProgress, Component, true)
+  } else {
+    // ! mount FuntionComponent
+
+    workInProgress.tag = FunctionComponent
+
+    reconcileChildren(null, workInProgress, value)
+
+    return workInProgress.child
+  }
+}
+
 function updateHostRoot(current: Fiber | null, workInProgress: Fiber) {
   console.log('<updateHostRoot>')
 
   if (current === null) {
-    console.error('bug')
+    throw Error('updateHostRoot')
   }
 
-  const nextProps = workInProgress.pendingProps
-  const prevState = workInProgress.memoizedState as State
+  const nextProps = workInProgress.pendingProps as ComponentState
+  const prevState = workInProgress.memoizedState as ComponentState
   const prevChildren = prevState.element
 
   // update state
-  processUpdateQueue(workInProgress, nextProps)
+  processUpdateQueue<ComponentState>(workInProgress, nextProps)
 
-  const nextState = workInProgress.memoizedState as State
+  const nextState = workInProgress.memoizedState as ComponentState
   const root = workInProgress.stateNode as FiberRoot
 
   const nextChildren = nextState.element
@@ -77,6 +143,7 @@ function updateFuntionComponent(
   Component: any,
   nextProps: Props,
 ) {
+  // ! update FuntionComponent
   console.log('<updateFuntionComponent>')
 
   let nextChildren
@@ -88,10 +155,19 @@ function updateFuntionComponent(
   return workInProgress.child
 }
 
+function updateFragment(current: Fiber | null, workInProgress: Fiber) {
+  const nextChildren = workInProgress.pendingProps
+
+  reconcileChildren(current, workInProgress, nextChildren)
+
+  return workInProgress.child
+}
+
 export function beginWork(current: Fiber | null, workInProgress: Fiber) {
   console.log('(beginWork)', clone(current), clone(workInProgress))
 
   // ! update
+
   // bailout 优化
   let didReceiveUpdate = false
 
@@ -107,6 +183,13 @@ export function beginWork(current: Fiber | null, workInProgress: Fiber) {
 
   // ! mount
   switch (workInProgress.tag) {
+    // 2
+    case IndeterminateComponent:
+      return mountIndeterminateComponent(
+        current,
+        workInProgress,
+        workInProgress.type,
+      )
     // 3
     case HostRoot:
       return updateHostRoot(current, workInProgress)
@@ -119,6 +202,7 @@ export function beginWork(current: Fiber | null, workInProgress: Fiber) {
     case HostText:
       return null
 
+    // 0
     case FunctionComponent:
       const Component = workInProgress.type
       const unresolvedProps = workInProgress.pendingProps
@@ -130,6 +214,10 @@ export function beginWork(current: Fiber | null, workInProgress: Fiber) {
         Component,
         resolvedProps,
       )
+
+    // 7
+    case Fragment:
+      return updateFragment(current, workInProgress)
   }
 
   return null

@@ -7,6 +7,7 @@ export type Container = Element
 export type Callback = null | (() => void)
 export type Instance = Element
 export type TextInstance = Text
+export type Owner = any
 
 export interface ReactElement {
   $$typeof?: symbol | number
@@ -14,6 +15,11 @@ export interface ReactElement {
   key: Key
   props: Props
   ref?: Ref
+  _owner?: Owner
   _author?: string
   _fucntion?: string
 }
+
+export type ReactEmpty = null | void | boolean
+
+export type ReactFragment = ReactEmpty

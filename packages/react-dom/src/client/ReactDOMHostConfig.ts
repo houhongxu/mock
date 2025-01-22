@@ -1,5 +1,10 @@
 import { updateFiberProps } from './ReactDOMComponentTree'
-import { createElement, createTextNode } from './ReactDomComponent'
+import {
+  createElement,
+  createTextNode,
+  diffProperties,
+  updateProperties,
+} from './ReactDomComponent'
 import { Instance, Props, TextInstance, Type } from 'shared/ReactTypes'
 
 export function createInstance(type: Type, props: Props) {
@@ -36,4 +41,33 @@ export function appendChild(
   child: Instance | TextInstance,
 ): void {
   parentInstance.appendChild(child)
+}
+
+export function prepareUpdate(
+  domElement: Instance,
+  type: string,
+  oldProps: Props,
+  newProps: Props,
+) {
+  return diffProperties(domElement, type, oldProps, newProps)
+}
+
+export function commitUpdate(
+  domElement: Instance,
+  updatePayload: Array<any>,
+  type: string,
+  oldProps: Props,
+  newProps: Props,
+) {
+  updateProperties()
+
+  updateFiberProps(domElement, newProps)
+}
+
+export function commitTextUpdate(
+  textInstance: TextInstance,
+  oldText: string,
+  newText: string,
+): void {
+  textInstance.nodeValue = newText
 }

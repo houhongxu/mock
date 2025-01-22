@@ -18,5 +18,8 @@ export const Deletion = /*                     */ 0b00000000000000000000001000
 // 16
 export const ChildDeletion = /*                */ 0b00000000000000000000010000
 
-// 22
-export const MutationMask = Placement | Update | ChildDeletion
+// 256
+export const Ref = /*                          */ 0b00000000000000001000000000
+
+// 278
+export const MutationMask = Placement | Update | ChildDeletion | Ref

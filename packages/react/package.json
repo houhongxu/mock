@@ -2,11 +2,11 @@
   "name": "react",
   "version": "0.0.1",
   "description": "package",
-  "main": "index.js",
   "module": "index.ts",
   "scripts": {},
   "dependencies": {
-    "shared": "workspace:*"
+    "shared": "workspace:*",
+    "react-reconciler": "workspace:*"
   },
   "devDependencies": {}
 }

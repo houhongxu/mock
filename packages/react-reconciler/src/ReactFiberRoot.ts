@@ -1,6 +1,7 @@
 import { Fiber, createHostRootFiber } from './ReactFiber'
+import { ComponentState } from './ReactInternalTypes'
 import { RootTag } from './ReactRootTags'
-import { State, initializeUpdateQueue } from './ReactUpdateQueue'
+import { initializeUpdateQueue } from './ReactUpdateQueue'
 import { Container } from 'shared/ReactTypes'
 import { clone } from 'shared/clone'
 
@@ -32,13 +33,13 @@ export function createFiberRoot(containerInfo: Container, tag: RootTag) {
 
   uninitializedFiber.stateNode = root
 
-  const initialState: State = {
+  const initialState: ComponentState = {
     element: null,
   }
 
   uninitializedFiber.memoizedState = initialState
 
-  initializeUpdateQueue(uninitializedFiber)
+  initializeUpdateQueue<ComponentState>(uninitializedFiber)
 
   return root
 }

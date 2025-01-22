@@ -2,7 +2,7 @@ import { Fiber } from './ReactFiber'
 import { MutationMask, NoFlags, Placement, Update } from './ReactFiberFlags'
 import { FiberRoot } from './ReactFiberRoot'
 import { HostComponent, HostRoot, HostText } from './ReactWorkTags'
-import { appendChild, insertBefore } from 'HostConfig'
+import { appendChild, commitTextUpdate, insertBefore } from 'HostConfig'
 import { Instance } from 'shared/ReactTypes'
 import { clone } from 'shared/clone'
 
@@ -112,6 +112,52 @@ function commmitPlacement(finishedWork: Fiber) {
       )
   }
 }
+function commitWork(current: Fiber | null, finishedWork: Fiber): void {
+  switch (finishedWork.tag) {
+    case HostRoot:
+      return
+    case HostComponent:
+      const instance = finishedWork.stateNode
+
+      if (instance != null) {
+        const newProps = finishedWork.memoizedProps
+
+        const oldProps = current !== null ? current.memoizedProps : newProps
+
+        const type = finishedWork.type
+
+        const updatePayload = finishedWork.updateQueue
+
+        finishedWork.updateQueue = null
+
+        if (updatePayload !== null) {
+          commitUpdate(
+            instance,
+            updatePayload,
+            type,
+            oldProps,
+            newProps,
+            finishedWork,
+          )
+        }
+      }
+      return
+    case HostText: {
+      if (finishedWork.stateNode === null) {
+        throw new Error('commitWork')
+      }
+
+      const textInstance = finishedWork.stateNode as Text
+
+      const newText: string = finishedWork.memoizedProps
+      const oldText: string = current !== null ? current.memoizedProps : newText
+
+      commitTextUpdate(textInstance, oldText, newText)
+
+      return
+    }
+  }
+}
 
 function commitMutationEffectsOnFiber(finishedWork: Fiber, root: FiberRoot) {
   console.log('[commitMutationEffectsOnFiber]')
@@ -127,6 +173,12 @@ function commitMutationEffectsOnFiber(finishedWork: Fiber, root: FiberRoot) {
       finishedWork.flags &= ~Placement
 
       break
+
+    case Update: {
+      const current = finishedWork.alternate
+      commitWork(current, finishedWork)
+      break
+    }
   }
 }
 

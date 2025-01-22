@@ -1,13 +1,27 @@
 import { Fiber } from './ReactFiber'
-import { NoFlags } from './ReactFiberFlags'
-import { HostComponent, HostRoot, HostText } from './ReactWorkTags'
+import { NoFlags, Ref, Update } from './ReactFiberFlags'
+import {
+  FunctionComponent,
+  HostComponent,
+  HostRoot,
+  HostText,
+} from './ReactWorkTags'
 import {
   appendInitialChild,
   createInstance,
   createTextInstance,
+  prepareUpdate,
 } from 'HostConfig'
-import { Instance } from 'shared/ReactTypes'
+import { Instance, Props, Type } from 'shared/ReactTypes'
 import { clone } from 'shared/clone'
+
+function markUpdate(workInProgress: Fiber) {
+  workInProgress.flags |= Update
+}
+
+function markRef(workInProgress: Fiber) {
+  workInProgress.flags |= Ref
+}
 
 function appendAllChildren(parent: Instance, workInProgress: Fiber) {
   console.log('[appendAllChildren]', parent)
@@ -45,6 +59,49 @@ function appendAllChildren(parent: Instance, workInProgress: Fiber) {
   }
 }
 
+function updateHostText(
+  current: Fiber,
+  workInProgress: Fiber,
+  oldText: string,
+  newText: string,
+) {
+  if (oldText !== newText) {
+    markUpdate(workInProgress)
+  }
+}
+
+function updateHostComponent(
+  current: Fiber,
+  workInProgress: Fiber,
+  type: Type,
+  newProps: Props,
+) {
+  const oldProps = current.memoizedProps
+
+  if (oldProps === newProps) {
+    return
+  }
+
+  const instance = workInProgress.stateNode
+
+  if (!instance) {
+    throw Error('updateHostComponent')
+  }
+
+  const updatePayload = prepareUpdate(
+    instance as Element,
+    type,
+    oldProps,
+    newProps,
+  )
+
+  workInProgress.updateQueue = updatePayload
+
+  // if (updatePayload) {
+  markUpdate(workInProgress)
+  // }
+}
+
 // 冒泡收集flag
 function bubbleProperties(completedWork: Fiber) {
   let subtreeFlags = NoFlags
@@ -71,6 +128,7 @@ export function completeWork(current: Fiber | null, workInProgress: Fiber) {
   const newProps = workInProgress.pendingProps
 
   switch (workInProgress.tag) {
+    case FunctionComponent:
     case HostRoot:
       bubbleProperties(workInProgress)
 
@@ -78,6 +136,14 @@ export function completeWork(current: Fiber | null, workInProgress: Fiber) {
     case HostComponent:
       if (current !== null && workInProgress.stateNode !== null) {
         // ! update
+
+        const type = workInProgress.type
+
+        updateHostComponent(current, workInProgress, type, newProps)
+
+        if (current.ref !== workInProgress.ref) {
+          markRef(workInProgress)
+        }
       } else {
         // ! mount
         const type = workInProgress.type
@@ -98,6 +164,9 @@ export function completeWork(current: Fiber | null, workInProgress: Fiber) {
 
       if (current && workInProgress.stateNode !== null) {
         // ! update
+        const oldText = current.memoizedProps
+
+        updateHostText(current, workInProgress, oldText, newText)
       } else {
         // ! mount
         const instance = createTextInstance(newText)
