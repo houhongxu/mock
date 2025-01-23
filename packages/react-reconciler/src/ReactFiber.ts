@@ -1,7 +1,5 @@
 import { Flags, NoFlags } from './ReactFiberFlags'
-import { Hook } from './ReactFiberHooks'
 import { FiberRoot } from './ReactFiberRoot'
-import { ComponentState } from './ReactInternalTypes'
 import { ConcurrentRoot, RootTag } from './ReactRootTags'
 import { ConcurrentMode, NoMode, TypeOfMode } from './ReactTypeOfMode'
 import { UpdateQueue } from './ReactUpdateQueue'

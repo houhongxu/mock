@@ -2,7 +2,12 @@ import { Fiber } from './ReactFiber'
 import { MutationMask, NoFlags, Placement, Update } from './ReactFiberFlags'
 import { FiberRoot } from './ReactFiberRoot'
 import { HostComponent, HostRoot, HostText } from './ReactWorkTags'
-import { appendChild, commitTextUpdate, insertBefore } from 'HostConfig'
+import {
+  appendChild,
+  commitTextUpdate,
+  commitUpdate,
+  insertBefore,
+} from 'HostConfig'
 import { Instance } from 'shared/ReactTypes'
 import { clone } from 'shared/clone'
 
@@ -131,14 +136,7 @@ function commitWork(current: Fiber | null, finishedWork: Fiber): void {
         finishedWork.updateQueue = null
 
         if (updatePayload !== null) {
-          commitUpdate(
-            instance,
-            updatePayload,
-            type,
-            oldProps,
-            newProps,
-            finishedWork,
-          )
+          commitUpdate(instance as Element, type, oldProps, newProps)
         }
       }
       return
@@ -160,7 +158,7 @@ function commitWork(current: Fiber | null, finishedWork: Fiber): void {
 }
 
 function commitMutationEffectsOnFiber(finishedWork: Fiber, root: FiberRoot) {
-  console.log('[commitMutationEffectsOnFiber]')
+  console.log('[commitMutationEffectsOnFiber]', finishedWork.stateNode)
 
   const flags = finishedWork.flags
 

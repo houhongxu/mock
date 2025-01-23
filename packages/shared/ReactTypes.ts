@@ -8,6 +8,7 @@ export type Callback = null | (() => void)
 export type Instance = Element
 export type TextInstance = Text
 export type Owner = any
+export type DOMEventName = string
 
 export interface ReactElement {
   $$typeof?: symbol | number

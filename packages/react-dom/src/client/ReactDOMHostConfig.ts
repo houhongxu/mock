@@ -54,7 +54,6 @@ export function prepareUpdate(
 
 export function commitUpdate(
   domElement: Instance,
-  updatePayload: Array<any>,
   type: string,
   oldProps: Props,
   newProps: Props,
